@@ -74,7 +74,7 @@ keerthiportfolio/
 
 ---
 
-## Featured Engineering Projects
+## Projects
 
 1. **Legal Lens AI** (`React`, `Vite`, `MongoDB`, `Express.js`, `Python / NLP`, `Tailwind CSS`)  
    *AI-Powered Legal Document Analyzer and Clause Vulnerability Scanner.*  
