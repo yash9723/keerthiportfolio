@@ -72,7 +72,14 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-[#dedbc8]/10 text-xs text-[#dedbc8]/60">
-                  <span className="font-mono">Explore Details</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono">Explore Details</span>
+                    {project.liveUrl && project.liveUrl !== '#' && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-mono">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live
+                      </span>
+                    )}
+                  </div>
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </div>
               </div>

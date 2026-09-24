@@ -78,7 +78,7 @@ keerthiportfolio/
 
 1. **Legal Lens AI** (`React`, `Vite`, `MongoDB`, `Express.js`, `Python / NLP`, `Tailwind CSS`)  
    *AI-Powered Legal Document Analyzer and Clause Vulnerability Scanner.*  
-   [Repository](https://github.com/keerthipetla/legallens-ai)
+   [Repository](https://github.com/keerthipetla/legallens-ai) &middot; [Live Demo](https://legallens-ai-onhd.onrender.com/)
 
 2. **EduFeedback ERP** (`React`, `Recharts`, `Socket.IO`, `Node.js`, `Express.js`, `MongoDB`)  
    *Automated Educational Feedback Dashboard with Real-Time Analytics.*  

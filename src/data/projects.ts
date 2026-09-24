@@ -19,7 +19,7 @@ export const projectsData: Project[] = [
     ],
     technologies: ['React', 'Vite', 'MongoDB', 'Express.js', 'Python / NLP', 'Tailwind CSS'],
     githubUrl: 'https://github.com/keerthipetla/legallens-ai',
-    liveUrl: '#'
+    liveUrl: 'https://legallens-ai-onhd.onrender.com/'
   },
   {
     id: 'edufeedback-erp',
