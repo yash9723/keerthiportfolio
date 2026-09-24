@@ -1,17 +1,17 @@
 # Petla Keerthi — Portfolio Website
 
-Personal portfolio website for **Petla Keerthi** (Software Developer).
+Personal portfolio website  **Petla Keerthi** (Software Developer).
 
 ## 🌐 Live Deployments
 - **Custom Domain:** [keerthipetla.dev](https://keerthipetla.dev)
 - **Cloudflare Pages:** [keerthiportfolio-5tu.pages.dev](https://keerthiportfolio-5tu.pages.dev)
 
-## 🛠️ Tech Stack
+##  Tech Stack
 - **Framework:** React / Vite
 - **Styling:** CSS3, Google Fonts (*Almarai*, *Instrument Serif*)
 - **Deployment:** Cloudflare Pages
 
-## 📁 Repository Structure
+##  Repository Structure
 ```
 ├── assets/
 │   ├── index-BzmmWr7U.css
@@ -22,5 +22,3 @@ Personal portfolio website for **Petla Keerthi** (Software Developer).
 └── README.md
 ```
 
-## 🚀 Deployment Instructions
-This static distribution can be deployed directly to Cloudflare Pages, GitHub Pages, Vercel, or Netlify with no build step required.
