@@ -1,6 +1,6 @@
 # Petla Keerthi — Developer Portfolio
 
-Personal portfolio website for **Petla Keerthi** (Software Developer).
+Personal portfolio website **Petla Keerthi** (Software Developer).
 
 ---
 
