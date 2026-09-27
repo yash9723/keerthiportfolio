@@ -1,0 +1,45 @@
+name: CI - Quality & Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches-ignore:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run TypeScript Check
+        run: npm run typecheck
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Verify Build Artifacts
+        run: |
+          if [ ! -f "dist/index.html" ]; then
+            echo "Error: dist/index.html was not generated!" >&2
+            exit 1
+          fi
+          echo "Production build verified successfully."

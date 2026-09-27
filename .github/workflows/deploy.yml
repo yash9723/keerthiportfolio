@@ -1,9 +1,10 @@
-name: Deploy Portfolio
+name: CD - Deploy Portfolio
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,31 +13,84 @@ permissions:
 
 concurrency:
   group: 'pages'
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
+    name: Build & Prepare
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci || npm install
+        run: npm ci
 
-      - name: Build Project
+      - name: TypeScript Check
+        run: npm run typecheck
+
+      - name: Build Production Distribution
         run: npm run build
 
-      - name: Upload Artifact
+      - name: Upload GitHub Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist/
 
+      - name: Archive Production Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-dist
+          path: dist/
+          retention-days: 14
+
+  deploy-github-pages:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-cloudflare-pages:
+    name: Deploy to Cloudflare Pages (Optional)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Production Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-dist
+          path: dist/
+
+      - name: Check Cloudflare Credentials
+        id: check-secrets
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "configured=true" >> $GITHUB_OUTPUT
+            echo "Cloudflare credentials detected in GitHub Secrets."
+          else
+            echo "configured=false" >> $GITHUB_OUTPUT
+            echo "Cloudflare credentials not detected. Skipping Cloudflare Pages deployment."
+            echo "To enable automatic deployment to Cloudflare Pages:"
+            echo "1. Go to repository Settings > Secrets and variables > Actions"
+            echo "2. Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID"
+          fi
+
+      - name: Deploy to Cloudflare Pages
+        if: steps.check-secrets.outputs.configured == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=keerthiportfolio --commit-dirty=true

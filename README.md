@@ -1,13 +1,17 @@
 # Petla Keerthi — Developer Portfolio
 
-Personal portfolio website **Petla Keerthi** (Software Developer).
+[![CD - Deploy Portfolio](https://github.com/yash9723/keerthiportfolio/actions/workflows/deploy.yml/badge.svg)](https://github.com/yash9723/keerthiportfolio/actions/workflows/deploy.yml)
+[![CI - Quality & Build Check](https://github.com/yash9723/keerthiportfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/yash9723/keerthiportfolio/actions/workflows/ci.yml)
+
+Personal portfolio website for **Petla Keerthi** (Software Developer).
 
 ---
 
 ## Live Deployments
 
-- **Custom Domain:** [https://keerthipetla.dev](https://keerthipetla.dev)
+- **GitHub Pages:** [https://yash9723.github.io/keerthiportfolio/](https://yash9723.github.io/keerthiportfolio/)
 - **Cloudflare Pages:** [https://keerthiportfolio-5tu.pages.dev](https://keerthiportfolio-5tu.pages.dev)
+- **Custom Domain:** [https://keerthipetla.dev](https://keerthipetla.dev)
 
 ---
 
@@ -17,7 +21,7 @@ Personal portfolio website **Petla Keerthi** (Software Developer).
 - **Bundler:** Vite 6
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS, CSS3, Google Fonts (*Almarai*, *Instrument Serif*)
-- **Deployment:** Cloudflare Pages, GitHub Pages
+- **Deployment & CI/CD:** GitHub Actions, GitHub Pages, Cloudflare Pages
 
 ---
 
@@ -27,7 +31,9 @@ Personal portfolio website **Petla Keerthi** (Software Developer).
 keerthiportfolio/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml              # GitHub Actions automated CI/CD deployment
+│       ├── ci.yml                  # PR & feature branch validation (typecheck & build)
+│       └── deploy.yml              # Production deployment to GitHub Pages & Cloudflare
+
 ├── dist/                           # Compiled production distribution (ready to deploy)
 │   ├── assets/
 │   │   ├── index-Bzmgc9oW.css      # Production stylesheet
@@ -117,7 +123,41 @@ npm run dev
 npm run build
 ```
 
+### 5. Type Checking
+```bash
+npm run typecheck
+```
+
+---
+
+## CI / CD Pipelines
+
+The repository features enterprise-grade GitHub Actions CI/CD pipelines:
+
+### 1. Continuous Integration (`.github/workflows/ci.yml`)
+- **Triggers**: Pull requests targeting `main` and pushes to feature branches.
+- **Jobs**:
+  - Sets up Node.js 22 with npm dependency caching.
+  - Runs clean install (`npm ci`).
+  - Executes static type check (`npm run typecheck`).
+  - Executes production build test (`npm run build`).
+  - Verifies presence and integrity of build output (`dist/index.html`).
+
+### 2. Continuous Deployment (`.github/workflows/deploy.yml`)
+- **Triggers**: Pushes to `main` branch or manual invocation via `workflow_dispatch`.
+- **Jobs**:
+  - **Build**: Compiles production bundles, runs TypeScript checks, and packages artifacts.
+  - **Deploy to GitHub Pages**: Deploys the built portfolio to [GitHub Pages](https://yash9723.github.io/keerthiportfolio/) using GitHub's modern OIDC token-based deployment.
+  - **Deploy to Cloudflare Pages (Optional)**: Automatically deploys to [Cloudflare Pages](https://keerthiportfolio-5tu.pages.dev) when repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` are configured.
+
+#### Setting up Cloudflare Pages Auto-Deploy (Optional)
+If you wish to enable dual automated deployments to Cloudflare Pages:
+1. Go to repository **Settings** &gt; **Secrets and variables** &gt; **Actions**.
+2. Add `CLOUDFLARE_API_TOKEN` (API token with Cloudflare Pages write permissions).
+3. Add `CLOUDFLARE_ACCOUNT_ID` (Your Cloudflare Account ID).
+
 ---
 
 ## License
 This project is open source and available under the [MIT License](LICENSE).
+
