@@ -11,25 +11,22 @@ export const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-24 sm:py-32 px-4 sm:px-6 md:px-12 border-t border-[#7c5cfc]/15 relative z-10 overflow-hidden">
-      {/* Ambient breathing glow */}
-      <div className="contact-glow" />
-
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="reveal mb-16 text-center">
-          <p className="font-mono text-[#00e5c0] text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-3">
+    <section id="contact" className="bg-black py-24 sm:py-32 px-4 sm:px-6 md:px-12 border-t border-[#dedbc8]/[0.05]">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-16 text-center">
+          <p className="text-[#dedbc8] text-[10px] sm:text-xs tracking-widest uppercase mb-3">
             05 / Contact
           </p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight text-white">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight text-[#dedbc8]">
             Let&rsquo;s start a conversation.
           </h2>
-          <p className="text-[#8a88a0] text-sm mt-3 font-light">
+          <p className="text-gray-400 text-sm mt-3">
             Whether for collaboration, engineering roles, or technical questions.
           </p>
         </div>
 
         {/* Contact Form */}
-        <div className="reveal bg-[#0d0d16]/90 backdrop-blur-md border border-[#7c5cfc]/25 rounded-3xl p-6 sm:p-12 mb-16 shadow-[0_20px_60px_rgba(0,0,0,0.6)] glow-card">
+        <div className="bg-[#101010] border border-[#dedbc8]/[0.08] rounded-3xl p-6 sm:p-12 mb-16 shadow-2xl">
           {submitted ? (
             <div className="text-center py-8">
               <span className="text-4xl block mb-4">🚀</span>

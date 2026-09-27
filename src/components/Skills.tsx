@@ -8,17 +8,17 @@ interface SkillsProps {
 
 export const Skills: React.FC<SkillsProps> = ({ selectedSkill, onSelectSkill }) => {
   return (
-    <section id="skills" className="py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#7c5cfc]/15 relative z-10">
+    <section id="skills" className="bg-black py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#dedbc8]/[0.05]">
       <div className="max-w-7xl mx-auto">
-        <div className="reveal flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-16">
           <div>
-            <p className="font-mono text-[#00e5c0] text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-3">
+            <p className="text-[#dedbc8] text-[10px] sm:text-xs tracking-widest uppercase mb-3">
               01 / Skills
             </p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-white">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-[#dedbc8]">
               Technologies and tools I work with.
             </h2>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-[#8a88a0] mt-1">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-gray-500 mt-1">
               Always learning. Always building.
             </h3>
           </div>
@@ -30,25 +30,25 @@ export const Skills: React.FC<SkillsProps> = ({ selectedSkill, onSelectSkill }) 
               </span>
               <button
                 onClick={() => onSelectSkill(null)}
-                className="px-3 py-1 bg-[#7c5cfc]/20 border border-[#7c5cfc]/50 rounded-md text-[#00e5c0] text-xs flex items-center gap-2 hover:bg-[#7c5cfc]/30 transition-all cursor-pointer font-mono"
+                className="px-3 py-1 bg-[#dedbc8]/10 border border-[#dedbc8]/25 rounded-md text-[#dedbc8] text-xs flex items-center gap-2 hover:bg-[#dedbc8]/20 transition-all cursor-pointer"
               >
-                {selectedSkill} <span className="opacity-80 font-bold">&times;</span>
+                {selectedSkill} <span className="opacity-60 font-bold">&times;</span>
               </button>
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {skillsData.map((category, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {skillsData.map((category) => (
             <div
               key={category.title}
-              className={`reveal reveal-delay-${(idx % 4) + 1} bg-[#0e0e18]/85 backdrop-blur-md border border-[#7c5cfc]/20 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group glow-card shadow-lg`}
+              className="bg-[#101010] border border-[#dedbc8]/[0.08] hover:border-[#dedbc8]/25 rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group"
             >
               <div>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7c5cfc]/20 to-[#00e5c0]/20 border border-[#7c5cfc]/30 flex items-center justify-center mb-6 text-[#00e5c0] group-hover:scale-110 transition-transform">
-                  <span className="text-sm font-mono font-bold">&lt;/&gt;</span>
+                <div className="w-10 h-10 rounded-xl bg-[#dedbc8]/10 flex items-center justify-center mb-6 text-[#dedbc8]">
+                  <span className="text-sm font-mono">&lt;/&gt;</span>
                 </div>
-                <h4 className="text-white text-xs sm:text-sm font-medium tracking-widest uppercase mb-4 font-mono">
+                <h4 className="text-[#dedbc8] text-xs sm:text-sm font-medium tracking-widest uppercase mb-4">
                   {category.title}
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -58,10 +58,10 @@ export const Skills: React.FC<SkillsProps> = ({ selectedSkill, onSelectSkill }) 
                       <button
                         key={skill}
                         onClick={() => onSelectSkill(isSelected ? null : skill)}
-                        className={`text-xs px-3 py-1.5 rounded-lg transition-all cursor-pointer font-mono ${
+                        className={`text-xs px-2.5 py-1 rounded-md transition-all cursor-pointer ${
                           isSelected
-                            ? 'bg-gradient-to-r from-[#7c5cfc] to-[#00e5c0] text-black font-bold shadow-md'
-                            : 'bg-[#7c5cfc]/[0.08] border border-[#7c5cfc]/25 text-[#dedbc8]/90 hover:border-[#00e5c0]/60 hover:text-white hover:bg-[#00e5c0]/[0.1]'
+                            ? 'bg-[#dedbc8] text-black font-semibold'
+                            : 'bg-[#dedbc8]/[0.04] border border-[#dedbc8]/10 text-[#dedbc8]/80 hover:border-[#dedbc8]/40 hover:text-[#dedbc8]'
                         }`}
                       >
                         {skill}

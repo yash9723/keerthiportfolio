@@ -7,13 +7,13 @@ export const ExperienceEducation: React.FC = () => {
   const [openFocusId, setOpenFocusId] = useState<string | null>(null);
 
   return (
-    <section id="experience" className="py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#7c5cfc]/15 relative z-10">
+    <section id="experience" className="bg-black py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#dedbc8]/[0.05]">
       <div className="max-w-7xl mx-auto">
-        <div className="reveal mb-16">
-          <p className="font-mono text-[#00e5c0] text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-3">
+        <div className="mb-16">
+          <p className="text-[#dedbc8] text-[10px] sm:text-xs tracking-widest uppercase mb-3">
             03 / Experience &amp; Education
           </p>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-white">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-[#dedbc8]">
             Where I have contributed &amp; learned.
           </h2>
         </div>
