@@ -3,22 +3,22 @@ import { certificationsData } from '../data/certifications';
 
 export const Certifications: React.FC = () => {
   return (
-    <section className="bg-black py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#dedbc8]/[0.05]">
+    <section id="certifications" className="py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#7c5cfc]/15 relative z-10">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16">
-          <p className="text-[#dedbc8] text-[10px] sm:text-xs tracking-widest uppercase mb-3">
+        <div className="reveal mb-16">
+          <p className="font-mono text-[#00e5c0] text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-3">
             04 / Certifications
           </p>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-[#dedbc8]">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-white">
             Credentials that validate the craft.
           </h2>
         </div>
 
-        <div className="space-y-3 max-w-4xl">
+        <div className="space-y-3.5 max-w-4xl">
           {certificationsData.map((cert, index) => (
             <div
               key={index}
-              className="bg-[#101010] border border-[#dedbc8]/[0.06] hover:border-[#dedbc8]/20 rounded-2xl px-6 py-5 flex items-center justify-between gap-4 transition-all duration-300 hover:translate-x-1"
+              className={`reveal reveal-delay-${(index % 4) + 1} bg-[#0d0d16]/85 backdrop-blur-md border border-[#7c5cfc]/20 hover:border-[#00e5c0]/50 rounded-2xl px-6 py-5 flex items-center justify-between gap-4 transition-all duration-300 hover:translate-x-2 shadow-md glow-card`}
             >
               <div className="flex items-center gap-4">
                 <span className="w-2 h-2 rounded-full bg-[#dedbc8]/40" />
