@@ -1,67 +1,110 @@
 import React from 'react';
-import { profileData } from '../data/profile';
+import { motion } from 'framer-motion';
+import { AnimatedTitle } from './AnimatedText';
+
+const heroVideoUrl = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4";
+
+const navItems = [
+  { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Contact', href: '#contact' },
+];
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative min-h-screen bg-black flex flex-col justify-between px-4 sm:px-6 md:px-12 pt-28 pb-12 overflow-hidden">
-      {/* Subtle radial ambient background */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[radial-gradient(ellipse,rgba(222,219,200,0.06)_0%,transparent_70%)] pointer-events-none" />
+    <section className="h-screen p-4 md:p-6">
+      <div className="relative w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden">
+        {/* Authentic Background Video */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src={heroVideoUrl} type="video/mp4" />
+        </video>
 
-      {/* Top Tagline */}
-      <div className="max-w-7xl mx-auto w-full pt-8">
-        <p className="text-[#dedbc8]/50 text-xs sm:text-sm tracking-[0.25em] uppercase font-light">
-          Portfolio &middot; 2025 &ndash; 2026
-        </p>
-      </div>
+        {/* Ambient Noise and Gradient Overlays */}
+        <div className="absolute inset-0 noise-overlay opacity-[0.7] mix-blend-overlay pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none" />
 
-      {/* Center Giant Typography */}
-      <div className="max-w-7xl mx-auto w-full my-auto py-12">
-        <h1 className="text-[16vw] sm:text-[14vw] lg:text-[12vw] font-medium leading-[0.85] tracking-[-0.05em] text-[#E1E0CC] select-none">
-          {profileData.name}
-        </h1>
-        <p className="text-[#dedbc8]/60 text-sm sm:text-base md:text-lg tracking-[0.15em] uppercase mt-6 font-light">
-          {profileData.headline}
-        </p>
-      </div>
-
-      {/* Bottom Summary Bar with Quick Stats */}
-      <div className="max-w-7xl mx-auto w-full border-t border-[#dedbc8]/10 pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-        <div className="max-w-md">
-          <p className="text-[#dedbc8]/70 text-xs sm:text-sm leading-relaxed">
-            {profileData.tagline}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-8 self-end sm:self-auto">
-          <div className="text-center">
-            <span className="block text-[#dedbc8] text-xl sm:text-2xl font-bold">
-              {profileData.stats.cgpa}
-            </span>
-            <span className="text-[#dedbc8]/40 text-[10px] tracking-widest uppercase">
-              CGPA
-            </span>
+        {/* Top Floating Navigation */}
+        <nav className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
+          <div className="bg-black rounded-b-2xl md:rounded-b-3xl px-4 py-2 md:px-8">
+            <ul className="flex items-center gap-3 sm:gap-6 md:gap-12 lg:gap-14">
+              {navItems.map((item) => (
+                <li key={item.label}>
+                  <a
+                    href={item.href}
+                    className="text-[10px] sm:text-xs md:text-sm whitespace-nowrap transition-colors duration-200 text-[#E1E0CC]/80 hover:text-[#E1E0CC]"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+        </nav>
 
-          <div className="w-[1px] h-8 bg-[#dedbc8]/15" />
+        {/* Hero Bottom Content */}
+        <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 md:px-8 pb-6 md:pb-8">
+          <div className="grid grid-cols-12 gap-4 items-end">
+            <div className="col-span-12 lg:col-span-8">
+              <motion.p
+                className="text-primary/60 text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-3"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+              >
+                ● Available for opportunities
+              </motion.p>
+              <h1
+                className="text-[18vw] sm:text-[16vw] md:text-[14vw] lg:text-[12vw] xl:text-[11vw] 2xl:text-[12vw] font-medium leading-[0.85] tracking-[-0.05em] select-none"
+                style={{ color: '#E1E0CC' }}
+              >
+                <AnimatedTitle text="Petla Keerthi" showAsterisk={true} />
+              </h1>
+              <motion.p
+                className="text-primary/70 text-xs sm:text-sm md:text-base max-w-lg mt-4 leading-relaxed"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+              >
+                Information Technology student &amp; Full-Stack Web Developer. Passionate about building responsive, user-friendly digital experiences.
+              </motion.p>
+            </div>
 
-          <div className="text-center">
-            <span className="block text-[#dedbc8] text-xl sm:text-2xl font-bold">
-              {profileData.stats.projectsCount}
-            </span>
-            <span className="text-[#dedbc8]/40 text-[10px] tracking-widest uppercase">
-              Projects
-            </span>
-          </div>
-
-          <div className="w-[1px] h-8 bg-[#dedbc8]/15" />
-
-          <div className="text-center">
-            <span className="block text-[#dedbc8] text-xl sm:text-2xl font-bold">
-              {profileData.stats.certsCount}
-            </span>
-            <span className="text-[#dedbc8]/40 text-[10px] tracking-widest uppercase">
-              Certifications
-            </span>
+            <div className="col-span-12 lg:col-span-4 flex flex-col items-start lg:items-end justify-between gap-6">
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary text-black font-medium text-xs sm:text-sm hover:bg-[#D4D1BD] transition-colors"
+                data-cursor="pointer"
+              >
+                Get in touch
+              </a>
+              <motion.div
+                className="flex gap-6 mt-2"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+              >
+                <div className="text-center">
+                  <span className="block text-primary text-lg sm:text-xl font-bold">9.23</span>
+                  <span className="text-primary/40 text-[9px] sm:text-[10px] tracking-widest uppercase">CGPA</span>
+                </div>
+                <div className="text-center">
+                  <span className="block text-primary text-lg sm:text-xl font-bold">4</span>
+                  <span className="text-primary/40 text-[9px] sm:text-[10px] tracking-widest uppercase">Projects</span>
+                </div>
+                <div className="text-center">
+                  <span className="block text-primary text-lg sm:text-xl font-bold">5</span>
+                  <span className="text-primary/40 text-[9px] sm:text-[10px] tracking-widest uppercase">Certs</span>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>
