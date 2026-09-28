@@ -123,18 +123,14 @@ const HoverArrow: React.FC = () => (
 );
 
 /** Live-site screenshot that lifts slightly when its card is hovered. */
-const ProjectPreview: React.FC<{ project: Project; fill?: boolean; className?: string }> = ({
+const ProjectPreview: React.FC<{ project: Project; sizes?: string; className?: string }> = ({
   project,
-  fill = false,
+  sizes,
   className = ''
 }) =>
   project.screenshot ? (
-    <div
-      className={`transition-transform duration-500 ease-out-strong group-hover:-translate-y-1 ${
-        fill ? 'flex flex-col flex-1' : ''
-      } ${className}`}
-    >
-      <BrowserFrame src={project.screenshot} alt={`${project.title} — live site`} url={project.liveUrl} fill={fill} />
+    <div className={`transition-transform duration-500 ease-out-strong group-hover:-translate-y-1 ${className}`}>
+      <BrowserFrame src={project.screenshot} alt={`${project.title} — live site`} url={project.liveUrl} sizes={sizes} />
     </div>
   ) : null;
 
@@ -217,20 +213,24 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* P-01: featured, spans two rows, with a warm light pooling at the top */}
+          {/*
+            P-01: featured, full width. Text on the left, the live-site preview on the right at its
+            natural 16:10 — a landscape screenshot fits a wide card without cropping.
+          */}
           <BentoCard
             index={0}
             project={legalLens}
             onOpen={setActiveProject}
             dimmed={isDimmed(legalLens)}
-            wrapperClassName="lg:row-span-2"
+            wrapperClassName="lg:col-span-2"
           >
             <div
               aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-2/3 pointer-events-none"
-              style={{ background: 'radial-gradient(80% 60% at 20% 0%, rgba(214,140,72,0.16), transparent 70%)' }}
+              className="absolute inset-y-0 left-0 w-2/3 pointer-events-none"
+              style={{ background: 'radial-gradient(70% 70% at 10% 0%, rgba(214,140,72,0.16), transparent 70%)' }}
             />
-            <div className="relative p-6 sm:p-9 flex flex-col h-full">
+            <div className="relative p-6 sm:p-9 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-8 lg:gap-12 items-center">
+              <div>
               <div className="flex items-start justify-between gap-3 mb-8">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="w-10 h-10 rounded-2xl glass-chip flex items-center justify-center">
@@ -263,8 +263,8 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
                   <Tag key={t} label={t} />
                 ))}
               </div>
-              {/* Fills the remaining height so the featured card never has a dead gap beside the stacked cards */}
-              <ProjectPreview project={legalLens} fill className="mt-8" />
+              </div>
+              <ProjectPreview project={legalLens} sizes="(min-width: 1024px) 660px, 100vw" />
             </div>
           </BentoCard>
 
