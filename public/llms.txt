@@ -10,10 +10,10 @@
 
 ## Projects
 
+- [HireHub](https://hirehub-job-portal-eight.vercel.app): MERN job portal with Employer/Job Seeker roles, JWT auth and Cloudinary résumé uploads. Source: https://github.com/keerthipetla/Hirehub-job-portal
 - [Legal Lens AI](https://legallens-ai-onhd.onrender.com/): AI-powered legal document analyzer (React, Vite, MongoDB, Express.js, Python/NLP). Source: https://github.com/keerthipetla/legal-lens-ai
 - [EduFeedback ERP](https://edufeedback-erp.onrender.com): Educational feedback dashboard with real-time analytics (React, Recharts, Socket.IO, Node.js, MongoDB). Source: https://github.com/keerthipetla/EdufeedBackERP
 - [RapidAid](https://rapidaid.pages.dev): Rural emergency response system with incident mapping (React, Vite, TypeScript, Leaflet, PWA)
-- [HireHub](https://hirehub-job-portal-eight.vercel.app): MERN job portal with Employer/Job Seeker roles, JWT auth and Cloudinary résumé uploads. Source: https://github.com/keerthipetla/Hirehub-job-portal
 - Music Player App: Responsive web audio player built during an internship (HTML, CSS, JavaScript). Source: https://github.com/keerthipetla/music-player
 
 ## Experience

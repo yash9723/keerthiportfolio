@@ -134,11 +134,28 @@ const ProjectPreview: React.FC<{ project: Project; sizes?: string; className?: s
     </div>
   ) : null;
 
-const featuredHighlights = [
-  'Built with React (Vite) and MongoDB for full-stack document analysis',
-  'Automatic summarization and key clause extraction engine',
-  'Redesigned readability of complex legal text for non-experts'
-];
+// The P-01 project gets the full-width featured card; change this id to feature a different one
+const FEATURED_ID = 'hirehub';
+
+// Extra copy the featured card shows (a badge and three highlights) for projects that can be featured
+const featuredContent: Record<string, { badge: string; highlights: string[] }> = {
+  hirehub: {
+    badge: 'Full-Stack',
+    highlights: [
+      'Role-based Employer and Job Seeker accounts with JWT authentication',
+      'Job posting, applications and résumé uploads to Cloudinary',
+      'Email notifications, plus an Android build via Capacitor'
+    ]
+  },
+  'legal-lens': {
+    badge: 'AI-Powered',
+    highlights: [
+      'Built with React (Vite) and MongoDB for full-stack document analysis',
+      'Automatic summarization and key clause extraction engine',
+      'Redesigned readability of complex legal text for non-experts'
+    ]
+  }
+};
 
 // Short tag lists shown on the cards; the full stack lives in the details modal
 const cardTags: Record<string, string[]> = {
@@ -160,9 +177,10 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
   const isDimmed = (project: Project) => isFiltering && !matches(project);
   const showBadge = (project: Project) => isFiltering && matches(project);
 
-  const legalLens = findProject('legal-lens');
+  const featured = findProject(FEATURED_ID);
+  const { badge: featuredBadge, highlights: featuredHighlights } = featuredContent[FEATURED_ID];
   const musicPlayer = findProject('music-player');
-  const FeaturedIcon = getProjectIcon(legalLens.icon);
+  const FeaturedIcon = getProjectIcon(featured.icon);
 
   const renderCompactCard = (project: Project, index: number) => {
     const Icon = getProjectIcon(project.icon);
@@ -219,9 +237,9 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
           */}
           <BentoCard
             index={0}
-            project={legalLens}
+            project={featured}
             onOpen={setActiveProject}
-            dimmed={isDimmed(legalLens)}
+            dimmed={isDimmed(featured)}
             wrapperClassName="lg:col-span-2"
           >
             <div
@@ -236,19 +254,19 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
                   <span className="w-10 h-10 rounded-2xl glass-chip flex items-center justify-center">
                     <FeaturedIcon className="w-[18px] h-[18px] text-primary" aria-hidden="true" />
                   </span>
-                  <CategoryLabel>{legalLens.category}</CategoryLabel>
+                  <CategoryLabel>{featured.category}</CategoryLabel>
                   <span className="glass-chip px-2.5 py-1 rounded-full text-primary text-[10px] tracking-[0.18em] uppercase">
-                    AI-Powered
+                    {featuredBadge}
                   </span>
-                  {showBadge(legalLens) && <MatchBadge />}
+                  {showBadge(featured) && <MatchBadge />}
                 </div>
                 <HoverArrow />
               </div>
-              <h3 id={titleId(legalLens)} className="text-primary text-2xl sm:text-3xl font-bold mb-3 tracking-tight">
-                {legalLens.title}
+              <h3 id={titleId(featured)} className="text-primary text-2xl sm:text-3xl font-bold mb-3 tracking-tight">
+                {featured.title}
               </h3>
               <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-7 max-w-lg text-pretty">
-                {legalLens.description}
+                {featured.description}
               </p>
               <ul className="space-y-3 mb-8">
                 {featuredHighlights.map((item) => (
@@ -259,21 +277,23 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
                 ))}
               </ul>
               <div className="flex flex-wrap gap-2">
-                {cardTags[legalLens.id].map((t) => (
+                {cardTags[featured.id].map((t) => (
                   <Tag key={t} label={t} />
                 ))}
               </div>
               </div>
-              <ProjectPreview project={legalLens} sizes="(min-width: 1024px) 660px, 100vw" />
+              <ProjectPreview project={featured} sizes="(min-width: 1024px) 660px, 100vw" />
             </div>
           </BentoCard>
 
-          {renderCompactCard(findProject('edufeedback-erp'), 1)}
-          {renderCompactCard(findProject('rapidaid'), 2)}
+          {/* P-02 to P-04 pair up two per row with the video card */}
+          {renderCompactCard(findProject('legal-lens'), 1)}
+          {renderCompactCard(findProject('edufeedback-erp'), 2)}
+          {renderCompactCard(findProject('rapidaid'), 3)}
 
-          {/* P-04: video-backed card */}
+          {/* P-05: video-backed card */}
           <BentoCard
-            index={3}
+            index={4}
             project={musicPlayer}
             onOpen={setActiveProject}
             dimmed={isDimmed(musicPlayer)}
@@ -307,8 +327,6 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
               </div>
             </div>
           </BentoCard>
-
-          {renderCompactCard(findProject('hirehub'), 4)}
 
           {/* Philosophy card spans the full row */}
           <BentoCard

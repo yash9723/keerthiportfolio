@@ -2,10 +2,32 @@ import { Project } from '../types';
 
 export const projectsData: Project[] = [
   {
+    id: 'hirehub',
+    title: 'HireHub',
+    tagline: 'Smart Career Platform — Full-Stack Job Portal',
+    category: 'P-01 / Featured',
+    icon: 'briefcase',
+    description: 'A MERN job portal where employers post and manage openings and job seekers apply with their résumé, backed by role-based accounts and email notifications.',
+    longDescription: 'HireHub is a two-sided job marketplace. Employers post, edit and remove listings and review incoming applications, while job seekers browse openings and apply by uploading a résumé. Accounts are role-based (Job Seeker or Employer) with JWT authentication, résumé files are stored on Cloudinary, and applicants are notified by email. The React frontend is also packaged as an Android app with Capacitor.',
+    role: 'Built the full stack: an Express and MongoDB REST API for jobs, applications, users and dashboards; JWT and bcrypt authentication with role-based access; Cloudinary résumé uploads; Nodemailer notifications; and the React (Vite) frontend.',
+    features: [
+      'Employer & Job Seeker roles',
+      'Job posting, editing & deletion',
+      'Résumé uploads to Cloudinary',
+      'Application status tracking',
+      'Email notifications',
+      'Android build via Capacitor'
+    ],
+    technologies: ['React', 'Vite', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Cloudinary', 'Capacitor'],
+    githubUrl: 'https://github.com/keerthipetla/Hirehub-job-portal',
+    liveUrl: 'https://hirehub-job-portal-eight.vercel.app',
+    screenshot: 'media/projects/hirehub'
+  },
+  {
     id: 'legal-lens',
     title: 'Legal Lens AI',
     tagline: 'AI-Powered Legal Document Analyzer',
-    category: 'P-01 / Featured',
+    category: 'P-02 / AI-Powered',
     icon: 'scale',
     description: 'An AI-powered platform that helps users understand, analyze, and work with legal documents easily.',
     longDescription: 'Legal Lens AI is designed to demystify complex legal texts. Traditional contracts are filled with dense jargon that is hard for non-experts to digest. Using Natural Language Processing (NLP) models, this application reads PDF contracts, translates legal terminology into plain language, flags potentially risky clauses (e.g., auto-renewals, non-competes, and liabilities), and generates structured summaries. Built with a fast React frontend and MongoDB to persist parsed analyses.',
@@ -26,7 +48,7 @@ export const projectsData: Project[] = [
     id: 'edufeedback-erp',
     title: 'EduFeedback ERP',
     tagline: 'Automated Educational Feedback Dashboard',
-    category: 'P-02 / Management',
+    category: 'P-03 / Management',
     icon: 'chart',
     description: 'A comprehensive educational dashboard providing automated feedback systems and real-time data visualization for students and teachers.',
     longDescription: 'EduFeedback ERP is a dashboard system tailored for academic institutions. It automates the collection of student performance metrics, generates analytical summaries, and provides teachers with actionable feedback on curriculum effectiveness. It facilitates drag-and-drop course builders, visual progression charts, and real-time alerts. It simplifies administrative oversight by tracking grades, attendance, and feedback loops.',
@@ -47,7 +69,7 @@ export const projectsData: Project[] = [
     id: 'rapidaid',
     title: 'RapidAid',
     tagline: 'Smart Rural Emergency Response System',
-    category: 'P-03 / Social Good',
+    category: 'P-04 / Social Good',
     icon: 'ambulance',
     description: 'A smart rural emergency response system designed to connect emergency responders with real-time location mapping and incident reporting.',
     longDescription: 'RapidAid addresses the critical delays in rural medical and disaster responses. In remote areas, emergency routing and dispatch face major coordinate mapping gaps. RapidAid allows local volunteers and dispatchers to register incidents with exact geo-coordinates, tracks volunteer proximity, and calculates optimal routes using open-source mapping APIs. Designed to work on low-bandwidth networks.',
@@ -69,7 +91,7 @@ export const projectsData: Project[] = [
     id: 'music-player',
     title: 'Music Player App',
     tagline: 'Responsive Web-Based Audio Streamer',
-    category: 'P-04 / Media',
+    category: 'P-05 / Media',
     icon: 'music',
     description: 'A fully responsive web-based audio player with interactive controls, dynamic progress bar, and enhanced UX.',
     longDescription: 'Built during a web development internship at Hie-Tech Solutions, the Music Player App is a lightweight, responsive web-based audio platform. It provides instant track loading, interactive controls (play, pause, skip, shuffle, repeat), visual progress tracking, volume slider controls, playlist management, and visual equalizer simulations. The app focuses on clean, cross-browser audio API compatibility and smooth interactions.',
@@ -86,27 +108,6 @@ export const projectsData: Project[] = [
     liveUrl: '#',
     videoUrl: 'media/music-720.mp4',
     videoPoster: 'media/music-poster.webp'
-  },
-  {
-    id: 'hirehub',
-    title: 'HireHub',
-    tagline: 'Smart Career Platform — Full-Stack Job Portal',
-    category: 'P-05 / Full-Stack',
-    icon: 'briefcase',
-    description: 'A MERN job portal where employers post and manage openings and job seekers apply with their résumé, backed by role-based accounts and email notifications.',
-    longDescription: 'HireHub is a two-sided job marketplace. Employers post, edit and remove listings and review incoming applications, while job seekers browse openings and apply by uploading a résumé. Accounts are role-based (Job Seeker or Employer) with JWT authentication, résumé files are stored on Cloudinary, and applicants are notified by email. The React frontend is also packaged as an Android app with Capacitor.',
-    role: 'Built the full stack: an Express and MongoDB REST API for jobs, applications, users and dashboards; JWT and bcrypt authentication with role-based access; Cloudinary résumé uploads; Nodemailer notifications; and the React (Vite) frontend.',
-    features: [
-      'Employer & Job Seeker roles',
-      'Job posting, editing & deletion',
-      'Résumé uploads to Cloudinary',
-      'Application status tracking',
-      'Email notifications',
-      'Android build via Capacitor'
-    ],
-    technologies: ['React', 'Vite', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Cloudinary', 'Capacitor'],
-    githubUrl: 'https://github.com/keerthipetla/Hirehub-job-portal',
-    liveUrl: 'https://hirehub-job-portal-eight.vercel.app',
-    screenshot: 'media/projects/hirehub'
   }
+
 ];
