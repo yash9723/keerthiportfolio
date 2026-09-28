@@ -14,6 +14,8 @@ export interface Project {
   liveUrl: string;
   videoUrl?: string;
   videoPoster?: string;
+  /** Base path of the live-site screenshot; `-640.webp` and `-1280.webp` variants exist. */
+  screenshot?: string;
 }
 
 export interface SkillCategory {

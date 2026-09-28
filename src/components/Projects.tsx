@@ -8,6 +8,7 @@ import { SectionHeader } from './SectionHeader';
 import { BackgroundVideo } from './BackgroundVideo';
 import { AmbientGlow } from './AmbientGlow';
 import { getProjectIcon } from './projectIcons';
+import { BrowserFrame } from './BrowserFrame';
 
 interface ProjectsProps {
   selectedSkill: string | null;
@@ -121,6 +122,22 @@ const HoverArrow: React.FC = () => (
   </span>
 );
 
+/** Live-site screenshot that lifts slightly when its card is hovered. */
+const ProjectPreview: React.FC<{ project: Project; fill?: boolean; className?: string }> = ({
+  project,
+  fill = false,
+  className = ''
+}) =>
+  project.screenshot ? (
+    <div
+      className={`transition-transform duration-500 ease-out-strong group-hover:-translate-y-1 ${
+        fill ? 'flex flex-col flex-1' : ''
+      } ${className}`}
+    >
+      <BrowserFrame src={project.screenshot} alt={`${project.title} — live site`} url={project.liveUrl} fill={fill} />
+    </div>
+  ) : null;
+
 const featuredHighlights = [
   'Built with React (Vite) and MongoDB for full-stack document analysis',
   'Automatic summarization and key clause extraction engine',
@@ -178,11 +195,12 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
           {project.title}
         </h3>
         <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 text-pretty">{project.description}</p>
-        <div className="flex flex-wrap gap-2 mt-auto">
+        <div className="flex flex-wrap gap-2">
           {cardTags[project.id].map((t) => (
             <Tag key={t} label={t} />
           ))}
         </div>
+        {project.screenshot && <ProjectPreview project={project} className="mt-6" />}
       </BentoCard>
     );
   };
@@ -215,6 +233,9 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
             <div className="relative p-6 sm:p-9 flex flex-col h-full">
               <div className="flex items-start justify-between gap-3 mb-8">
                 <div className="flex items-center gap-2 flex-wrap">
+                  <span className="w-10 h-10 rounded-2xl glass-chip flex items-center justify-center">
+                    <FeaturedIcon className="w-[18px] h-[18px] text-primary" aria-hidden="true" />
+                  </span>
                   <CategoryLabel>{legalLens.category}</CategoryLabel>
                   <span className="glass-chip px-2.5 py-1 rounded-full text-primary text-[10px] tracking-[0.18em] uppercase">
                     AI-Powered
@@ -223,16 +244,13 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
                 </div>
                 <HoverArrow />
               </div>
-              <div className="w-14 h-14 rounded-2xl glass-chip flex items-center justify-center mb-6">
-                <FeaturedIcon className="w-7 h-7 text-primary" aria-hidden="true" />
-              </div>
               <h3 id={titleId(legalLens)} className="text-primary text-2xl sm:text-3xl font-bold mb-3 tracking-tight">
                 {legalLens.title}
               </h3>
               <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-7 max-w-lg text-pretty">
                 {legalLens.description}
               </p>
-              <ul className="space-y-3 mb-8 flex-1">
+              <ul className="space-y-3 mb-8">
                 {featuredHighlights.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CircleCheck className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
@@ -245,6 +263,8 @@ export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
                   <Tag key={t} label={t} />
                 ))}
               </div>
+              {/* Fills the remaining height so the featured card never has a dead gap beside the stacked cards */}
+              <ProjectPreview project={legalLens} fill className="mt-8" />
             </div>
           </BentoCard>
 

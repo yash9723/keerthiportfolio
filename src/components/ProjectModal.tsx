@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { Project } from '../types';
 import { getProjectIcon } from './projectIcons';
 import { ActionLink } from './ActionLink';
+import { BrowserFrame } from './BrowserFrame';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -109,6 +110,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
               {project.title}
             </h3>
             <p className="text-sm text-primary/70 mb-6">{project.tagline}</p>
+
+            {project.screenshot && (
+              <BrowserFrame
+                src={project.screenshot}
+                alt={`${project.title} — screenshot of the live site`}
+                url={project.liveUrl}
+                sizes="(min-width: 672px) 620px, 100vw"
+                className="mb-8"
+              />
+            )}
 
             <div className="space-y-6 border-t border-primary/10 pt-6">
               <div>

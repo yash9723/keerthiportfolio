@@ -19,7 +19,8 @@ export const projectsData: Project[] = [
     ],
     technologies: ['React', 'Vite', 'MongoDB', 'Express.js', 'Python / NLP', 'Tailwind CSS'],
     githubUrl: 'https://github.com/keerthipetla/legal-lens-ai',
-    liveUrl: 'https://legallens-ai-onhd.onrender.com/'
+    liveUrl: 'https://legallens-ai-onhd.onrender.com/',
+    screenshot: 'media/projects/legal-lens'
   },
   {
     id: 'edufeedback-erp',
@@ -39,7 +40,8 @@ export const projectsData: Project[] = [
     ],
     technologies: ['React', 'Recharts', 'Socket.IO', 'Node.js', 'Express.js', 'MongoDB'],
     githubUrl: 'https://github.com/keerthipetla/EdufeedBackERP',
-    liveUrl: 'https://edufeedback-erp.onrender.com'
+    liveUrl: 'https://edufeedback-erp.onrender.com',
+    screenshot: 'media/projects/edufeedback'
   },
   {
     id: 'rapidaid',
@@ -60,7 +62,8 @@ export const projectsData: Project[] = [
     technologies: ['React', 'Vite', 'TypeScript', 'Leaflet API', 'PWA / Workbox', 'Tailwind CSS'],
     // Repository is not public yet — the GitHub button is hidden until it is
     githubUrl: '#',
-    liveUrl: 'https://rapidaid.pages.dev'
+    liveUrl: 'https://rapidaid.pages.dev',
+    screenshot: 'media/projects/rapidaid'
   },
   {
     id: 'music-player',
@@ -103,6 +106,7 @@ export const projectsData: Project[] = [
     ],
     technologies: ['React', 'Vite', 'Node.js', 'Express.js', 'MongoDB', 'JWT', 'Cloudinary', 'Capacitor'],
     githubUrl: 'https://github.com/keerthipetla/Hirehub-job-portal',
-    liveUrl: 'https://hirehub-job-portal-eight.vercel.app'
+    liveUrl: 'https://hirehub-job-portal-eight.vercel.app',
+    screenshot: 'media/projects/hirehub'
   }
 ];

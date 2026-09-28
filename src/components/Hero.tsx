@@ -85,8 +85,11 @@ export const Hero: React.FC = () => {
             </div>
 
             <div className="col-span-12 lg:col-span-4 flex flex-col items-start lg:items-end justify-between gap-5">
-              <motion.div className="flex flex-wrap items-center gap-2 lg:justify-end" {...fadeUp(0.5)}>
-                <ActionLink href="#contact">Get in touch</ActionLink>
+              {/* On phones the primary CTA takes its own full-width row; the two profile links pair below it */}
+              <motion.div className="flex flex-wrap items-center gap-2 lg:justify-end max-sm:w-full" {...fadeUp(0.5)}>
+                <ActionLink href="#contact" className="max-sm:w-full max-sm:justify-between">
+                  Get in touch
+                </ActionLink>
                 <ActionLink href={profileData.github} variant="glass" external>
                   GitHub
                 </ActionLink>
@@ -96,9 +99,9 @@ export const Hero: React.FC = () => {
               </motion.div>
 
               {/* Real frosted glass: it sits over the moving video, so the blur has something to work with */}
-              <motion.dl className="glass-blur rounded-2xl flex divide-x divide-primary/10" {...fadeUp(0.65)}>
+              <motion.dl className="glass-blur rounded-2xl flex divide-x divide-primary/10 max-sm:w-full" {...fadeUp(0.65)}>
                 {stats.map((stat) => (
-                  <div key={stat.label} className="px-5 py-3 flex flex-col-reverse items-center">
+                  <div key={stat.label} className="px-5 py-3 flex flex-col-reverse items-center max-sm:flex-1">
                     <dt className="text-primary/70 text-[10px] tracking-[0.2em] uppercase mt-1">{stat.label}</dt>
                     <dd className="text-primary text-xl sm:text-2xl font-bold tabular-nums leading-none">{stat.value}</dd>
                   </div>
