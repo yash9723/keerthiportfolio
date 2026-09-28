@@ -13,12 +13,12 @@ export const skillsData: SkillCategory[] = [
   },
   {
     title: 'Concepts',
-    icon: 'layers',
+    icon: 'cpu',
     skills: ['OOP', 'Core Java', 'MongoDB', 'Full-Stack']
   },
   {
     title: 'Coding Platforms',
-    icon: 'terminal',
+    icon: 'award',
     skills: ['CodeChef', 'LeetCode', 'HackerRank']
   }
 ];

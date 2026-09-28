@@ -1,142 +1,111 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { profileData } from '../data/profile';
-import { AvatarCanvas } from './AvatarCanvas';
+import { projectsData } from '../data/projects';
+import { certificationsData } from '../data/certifications';
+import { navLinks } from '../data/navigation';
+import { WordsPullUp } from './AnimatedText';
+import { BackgroundVideo } from './BackgroundVideo';
+import { ActionLink } from './ActionLink';
+
+const heroVideoSources = [
+  { src: 'media/hero-1920.mp4', media: '(min-width: 768px)' },
+  { src: 'media/hero-960.mp4' }
+];
+const heroPosterSrcSet =
+  'media/hero-poster-960.webp 960w, media/hero-poster-1440.webp 1440w, media/hero-poster-1920.webp 1920w';
+
+const EASE = [0.23, 1, 0.32, 1] as const;
+
+// No `filter` in these entrances: any filter on an element (even blur(0px) left behind after the
+// animation) breaks backdrop-filter on it and its children, which would kill the glass blur.
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { delay, duration: 0.8, ease: EASE }
+});
 
 export const Hero: React.FC = () => {
-  const [cgpa, setCgpa] = useState(0);
-  const [hasCounted, setHasCounted] = useState(false);
-  const statsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasCounted) {
-          setHasCounted(true);
-          const duration = 1800;
-          const target = 9.23;
-          const startTime = performance.now();
-
-          const updateCounter = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            // Ease out cubic
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const currentVal = easeOut * target;
-            setCgpa(currentVal);
-
-            if (progress < 1) {
-              requestAnimationFrame(updateCounter);
-            } else {
-              setCgpa(target);
-            }
-          };
-
-          requestAnimationFrame(updateCounter);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (statsRef.current) {
-      observer.observe(statsRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [hasCounted]);
+  const stats = [
+    { value: profileData.stats.cgpa, label: 'CGPA' },
+    { value: projectsData.length, label: 'Projects' },
+    { value: certificationsData.length, label: 'Certs' }
+  ];
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-12 pt-28 pb-16 overflow-hidden">
-      {/* Radial glow backdrop */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[500px] bg-[radial-gradient(ellipse,rgba(124,92,252,0.12)_0%,rgba(0,229,192,0.04)_40%,transparent_70%)] pointer-events-none z-0" />
+    <section className="h-[100dvh] min-h-[560px] p-3 md:p-5">
+      <div className="relative w-full h-full rounded-[1.75rem] md:rounded-[2.25rem] overflow-hidden bg-[#1a150f] ring-1 ring-inset ring-primary/10">
+        <BackgroundVideo
+          sources={heroVideoSources}
+          poster="media/hero-poster-1440.webp"
+          posterSrcSet={heroPosterSrcSet}
+          priority
+        />
+        <div className="absolute inset-0 noise-overlay opacity-[0.6] mix-blend-overlay pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/75 pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
-        {/* Left Column: Typography, Taglines & CTAs */}
-        <div className="lg:col-span-7 flex flex-col justify-center">
-          {/* Eyebrow */}
-          <div className="flex items-center gap-3 mb-6">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#00e5c0] shadow-[0_0_12px_#00e5c0] animate-pulse" />
-            <p className="font-mono text-xs sm:text-sm tracking-[0.25em] uppercase text-[#00e5c0] font-medium">
-              Available for opportunities &middot; 2025&ndash;2026
-            </p>
+        {/* Notched nav tab hanging from the top edge — the site's signature element */}
+        <nav aria-label="Primary" className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
+          <div className="bg-black rounded-b-2xl md:rounded-b-3xl px-3 md:px-8">
+            <ul className="flex items-center gap-1 sm:gap-4 md:gap-10 lg:gap-12">
+              {navLinks.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    className="inline-flex items-center min-h-[40px] px-1.5 text-[11px] sm:text-xs md:text-sm whitespace-nowrap transition-colors duration-200 text-primary/80 hover:text-primary"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+        </nav>
 
-          {/* Headline */}
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-white leading-[0.92] mb-4">
-            PETLA <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7c5cfc] via-[#a28aff] to-[#00e5c0]">
-              KEERTHI
-            </span>
-          </h1>
-
-          {/* Role */}
-          <p className="text-lg sm:text-2xl text-[#dedbc8]/90 font-light tracking-wide mb-6">
-            <strong className="text-[#00e5c0] font-semibold">Full-Stack Developer</strong> &amp; IT Engineer
-          </p>
-
-          {/* Summary with typing cursor */}
-          <p className="text-[#dedbc8]/75 text-sm sm:text-base max-w-xl leading-relaxed mb-8">
-            Information Technology student building web applications that solve real problems.
-            From music players to AI-powered legal tools &mdash; I turn ideas into interactive experiences.
-            <span className="inline-block w-0.5 h-4 ml-1 bg-[#00e5c0] animate-pulse align-middle" />
-          </p>
-
-          {/* Call to Actions */}
-          <div className="flex flex-wrap items-center gap-4 mb-10">
-            <a
-              href="#projects"
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#7c5cfc] to-[#6342e8] text-white font-medium text-sm tracking-wide shadow-[0_8px_25px_rgba(124,92,252,0.35)] hover:shadow-[0_12px_35px_rgba(124,92,252,0.5)] hover:-translate-y-0.5 transition-all duration-200"
-            >
-              View My Work &rarr;
-            </a>
-            <a
-              href="#contact"
-              className="px-6 py-3.5 rounded-xl border border-[#dedbc8]/20 bg-white/[0.03] text-[#dedbc8] hover:text-white hover:border-[#00e5c0]/60 hover:bg-[#00e5c0]/[0.05] font-medium text-sm tracking-wide transition-all duration-200"
-            >
-              Get in Touch
-            </a>
-          </div>
-
-          {/* Animated Statistics Bar */}
-          <div
-            ref={statsRef}
-            className="pt-6 border-t border-[#dedbc8]/10 flex flex-wrap items-center gap-8 sm:gap-12"
-          >
-            <div>
-              <span className="block font-mono text-2xl sm:text-3xl font-bold text-[#00e5c0]">
-                {cgpa > 0 ? cgpa.toFixed(2) : '0.00'}
-              </span>
-              <span className="font-mono text-[10px] sm:text-xs text-[#dedbc8]/50 uppercase tracking-widest">
-                CGPA
-              </span>
+        <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 md:px-9 pb-5 md:pb-9">
+          <div className="grid grid-cols-12 gap-5 items-end">
+            <div className="col-span-12 lg:col-span-8">
+              <motion.p className="eyebrow glass-blur mb-4" {...fadeUp(0.15)}>
+                <span className="relative flex w-1.5 h-1.5" aria-hidden="true">
+                  <span className="pulse-ring absolute inset-0 rounded-full bg-primary" />
+                  <span className="relative w-1.5 h-1.5 rounded-full bg-primary" />
+                </span>
+                Available for opportunities
+              </motion.p>
+              <h1 className="text-[18vw] sm:text-[16vw] md:text-[14vw] lg:text-[12vw] xl:text-[11vw] 2xl:text-[12vw] font-medium leading-[0.85] tracking-[-0.05em] text-primary [text-shadow:0_2px_40px_rgba(0,0,0,0.35)]">
+                <WordsPullUp text={profileData.name} showAsterisk />
+              </h1>
+              <motion.p
+                className="text-primary/85 text-sm md:text-base max-w-lg mt-5 leading-relaxed text-pretty"
+                {...fadeUp(0.4)}
+              >
+                Information Technology student &amp; Full-Stack Web Developer. Passionate about building responsive,{' '}
+                <span className="font-serif italic text-primary text-[1.15em]">user-friendly</span> digital experiences.
+              </motion.p>
             </div>
 
-            <div className="w-[1px] h-9 bg-[#dedbc8]/15" />
+            <div className="col-span-12 lg:col-span-4 flex flex-col items-start lg:items-end justify-between gap-5">
+              <motion.div className="flex flex-wrap items-center gap-2 lg:justify-end" {...fadeUp(0.5)}>
+                <ActionLink href="#contact">Get in touch</ActionLink>
+                <ActionLink href={profileData.github} variant="glass" external>
+                  GitHub
+                </ActionLink>
+                <ActionLink href={profileData.linkedin} variant="glass" external>
+                  LinkedIn
+                </ActionLink>
+              </motion.div>
 
-            <div>
-              <span className="block font-mono text-2xl sm:text-3xl font-bold text-white">
-                {profileData.stats.projectsCount}
-              </span>
-              <span className="font-mono text-[10px] sm:text-xs text-[#dedbc8]/50 uppercase tracking-widest">
-                Projects
-              </span>
-            </div>
-
-            <div className="w-[1px] h-9 bg-[#dedbc8]/15" />
-
-            <div>
-              <span className="block font-mono text-2xl sm:text-3xl font-bold text-white">
-                {profileData.stats.certsCount}
-              </span>
-              <span className="font-mono text-[10px] sm:text-xs text-[#dedbc8]/50 uppercase tracking-widest">
-                Certifications
-              </span>
+              {/* Real frosted glass: it sits over the moving video, so the blur has something to work with */}
+              <motion.dl className="glass-blur rounded-2xl flex divide-x divide-primary/10" {...fadeUp(0.65)}>
+                {stats.map((stat) => (
+                  <div key={stat.label} className="px-5 py-3 flex flex-col-reverse items-center">
+                    <dt className="text-primary/70 text-[10px] tracking-[0.2em] uppercase mt-1">{stat.label}</dt>
+                    <dd className="text-primary text-xl sm:text-2xl font-bold tabular-nums leading-none">{stat.value}</dd>
+                  </div>
+                ))}
+              </motion.dl>
             </div>
           </div>
-        </div>
-
-        {/* Right Column: 3D Three.js Avatar */}
-        <div className="lg:col-span-5 flex justify-center lg:justify-end">
-          <AvatarCanvas />
         </div>
       </div>
     </section>

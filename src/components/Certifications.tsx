@@ -1,41 +1,46 @@
 import React from 'react';
+import { Award } from 'lucide-react';
 import { certificationsData } from '../data/certifications';
+import { SectionHeader } from './SectionHeader';
+import { AmbientGlow } from './AmbientGlow';
 
 export const Certifications: React.FC = () => {
   return (
-    <section id="certifications" className="py-20 sm:py-28 px-4 sm:px-6 md:px-12 border-t border-[#7c5cfc]/15 relative z-10">
-      <div className="max-w-7xl mx-auto">
-        <div className="reveal mb-16">
-          <p className="font-mono text-[#00e5c0] text-[10px] sm:text-xs tracking-[0.25em] uppercase mb-3">
-            04 / Certifications
+    <section id="certifications" className="relative py-24 sm:py-28 md:py-40 px-4 md:px-6">
+      <AmbientGlow tone="rose" intensity={0.1} className="-left-40 top-20 w-[40rem] h-[34rem]" />
+      <div className="relative max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+        <SectionHeader
+          eyebrow="04 / Certifications"
+          lines={[{ text: 'Credentials that' }, { text: 'validate the craft.', muted: true }]}
+          className="lg:col-span-4 lg:sticky lg:top-28"
+        >
+          <p className="text-primary/60 text-xs sm:text-sm mt-4 max-w-xs">
+            Industry and university certifications earned alongside coursework.
           </p>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight text-white">
-            Credentials that validate the craft.
-          </h2>
-        </div>
+        </SectionHeader>
 
-        <div className="space-y-3.5 max-w-4xl">
-          {certificationsData.map((cert, index) => (
-            <div
-              key={index}
-              className={`reveal reveal-delay-${(index % 4) + 1} bg-[#0d0d16]/85 backdrop-blur-md border border-[#7c5cfc]/20 hover:border-[#00e5c0]/50 rounded-2xl px-6 py-5 flex items-center justify-between gap-4 transition-all duration-300 hover:translate-x-2 shadow-md glow-card`}
-            >
-              <div className="flex items-center gap-4">
-                <span className="w-2 h-2 rounded-full bg-[#dedbc8]/40" />
-                <div>
-                  <h4 className="text-[#dedbc8] text-sm sm:text-base font-medium">
-                    {cert.name}
-                  </h4>
-                  <p className="text-gray-500 text-[10px] sm:text-xs tracking-wider uppercase font-mono">
-                    {cert.issuer}
-                  </p>
+        <div className="lg:col-span-8 glass-shell">
+          <ul className="glass-core p-2 sm:p-3">
+            {certificationsData.map((cert) => (
+              <li
+                key={cert.name}
+                className="flex items-center justify-between gap-4 px-3 sm:px-4 py-4 rounded-2xl border-b border-primary/[0.06] last:border-0 transition-[background-color,transform] duration-200 ease-out-strong hover:bg-primary/[0.04] hover:translate-x-1"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <span className="w-10 h-10 rounded-xl glass-chip flex items-center justify-center flex-shrink-0">
+                    <Award className="w-[18px] h-[18px] text-primary" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-primary text-sm sm:text-base font-medium">{cert.name}</h3>
+                    <p className="text-gray-400 text-[11px] sm:text-xs tracking-wider uppercase font-mono mt-0.5">{cert.issuer}</p>
+                  </div>
                 </div>
-              </div>
-              <span className="px-3 py-1 bg-[#dedbc8]/[0.06] border border-[#dedbc8]/10 rounded-full text-[#dedbc8]/60 text-xs font-mono">
-                {cert.year}
-              </span>
-            </div>
-          ))}
+                <span className="glass-chip px-3 py-1 rounded-full text-primary/80 text-xs font-mono tabular-nums flex-shrink-0">
+                  {cert.year}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

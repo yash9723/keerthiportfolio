@@ -1,0 +1,29 @@
+# Petla Keerthi
+
+> Full-stack web developer and B.Tech Information Technology student at Aditya University (2023–2027, CGPA 9.23), based in Andhra Pradesh, India. Available for opportunities.
+
+## Contact
+
+- Email: petakeerthi@gmail.com
+- LinkedIn: https://www.linkedin.com/in/keerthi-petla-9b2941298
+- GitHub: https://github.com/keerthipetla
+
+## Projects
+
+- [Legal Lens AI](https://legallens-ai-onhd.onrender.com/): AI-powered legal document analyzer (React, Vite, MongoDB, Express.js, Python/NLP). Source: https://github.com/keerthipetla/legal-lens-ai
+- [EduFeedback ERP](https://edufeedback-erp.onrender.com): Educational feedback dashboard with real-time analytics (React, Recharts, Socket.IO, Node.js, MongoDB). Source: https://github.com/keerthipetla/EdufeedBackERP
+- [RapidAid](https://rapidaid.pages.dev): Rural emergency response system with incident mapping (React, Vite, TypeScript, Leaflet, PWA)
+- [HireHub](https://hirehub-job-portal-eight.vercel.app): MERN job portal with Employer/Job Seeker roles, JWT auth and Cloudinary résumé uploads. Source: https://github.com/keerthipetla/Hirehub-job-portal
+- Music Player App: Responsive web audio player built during an internship (HTML, CSS, JavaScript). Source: https://github.com/keerthipetla/music-player
+
+## Experience
+
+- Web Development Intern, Hie-Tech Solutions, Kakinada (2024)
+
+## Skills
+
+Java, Python, SQL, JavaScript, React, Vite, HTML, CSS, OOP, MongoDB, full-stack development.
+
+## Certifications
+
+NPTEL Introduction to Industry 4.0 and IoT (Elite), Google Cloud Engineer Track, Oracle Cloud Infrastructure Foundations, Infosys DBMS, Infosys Operating Systems (all 2025).

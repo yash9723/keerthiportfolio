@@ -1,82 +1,102 @@
 import React, { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
+type CursorVariant = 'default' | 'pointer' | 'view';
+
+const ringStyles: Record<CursorVariant, Record<string, string | number>> = {
+  default: {
+    width: 32,
+    height: 32,
+    backgroundColor: 'transparent',
+    borderColor: 'rgba(222, 219, 200, 0.35)',
+    borderWidth: 1
+  },
+  pointer: {
+    width: 48,
+    height: 48,
+    backgroundColor: 'rgba(222, 219, 200, 0.08)',
+    borderColor: 'rgba(222, 219, 200, 0.8)',
+    borderWidth: 1.5
+  },
+  view: {
+    width: 70,
+    height: 70,
+    backgroundColor: 'rgba(222, 219, 200, 0.95)',
+    borderColor: 'rgba(222, 219, 200, 1)',
+    borderWidth: 0
+  }
+};
+
+/**
+ * Dot + trailing ring cursor. Interactive elements can opt into a variant
+ * with `data-cursor="pointer" | "view"`. Disabled on touch devices.
+ */
 export const CustomCursor: React.FC = () => {
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  const [isHovered, setIsHovered] = useState(false);
+  const [variant, setVariant] = useState<CursorVariant | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
+
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const springConfig = { damping: 35, stiffness: 350, mass: 0.35 };
+  const ringX = useSpring(mouseX, springConfig);
+  const ringY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    // Only enable on desktop pointer devices
-    if (window.matchMedia('(pointer: coarse)').matches) return;
+    const touch =
+      window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setIsTouch(touch || reducedMotion);
+    if (touch || reducedMotion) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      setPos({ x: e.clientX, y: e.clientY });
-      if (!isVisible) setIsVisible(true);
-    };
+    // Hides the native arrow so only the custom cursor shows (see index.css)
+    document.documentElement.classList.add('has-custom-cursor');
 
-    const handleMouseLeave = () => {
-      setIsVisible(false);
-    };
-
-    const handleMouseEnter = () => {
+    const handleMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
       setIsVisible(true);
     };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    document.body.addEventListener('mouseleave', handleMouseLeave);
-    document.body.addEventListener('mouseenter', handleMouseEnter);
-
-    const handleHoverStart = (e: MouseEvent) => {
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-      if (
-        target.closest('a') ||
-        target.closest('button') ||
-        target.closest('[role="button"]') ||
-        target.closest('input') ||
-        target.closest('textarea') ||
-        target.closest('.group')
-      ) {
-        setIsHovered(true);
-      } else {
-        setIsHovered(false);
-      }
+    const handleLeave = () => setIsVisible(false);
+    const handleEnter = () => setIsVisible(true);
+    const handleOver = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement | null)?.closest('a, button, [role="button"], [data-cursor]');
+      setVariant(target ? ((target.getAttribute('data-cursor') as CursorVariant | null) ?? 'pointer') : null);
     };
 
-    document.addEventListener('mouseover', handleHoverStart);
-
+    window.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseleave', handleLeave);
+    document.addEventListener('mouseenter', handleEnter);
+    window.addEventListener('mouseover', handleOver);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeEventListener('mouseleave', handleMouseLeave);
-      document.body.removeEventListener('mouseenter', handleMouseEnter);
-      document.removeEventListener('mouseover', handleHoverStart);
+      document.documentElement.classList.remove('has-custom-cursor');
+      window.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseleave', handleLeave);
+      document.removeEventListener('mouseenter', handleEnter);
+      window.removeEventListener('mouseover', handleOver);
     };
-  }, [isVisible]);
+  }, [mouseX, mouseY]);
 
-  if (!isVisible) return null;
+  if (isTouch || !isVisible) return null;
 
   return (
     <>
-      {/* Inner Dot */}
-      <div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-[#00e5c0] pointer-events-none z-[99999] -translate-x-1/2 -translate-y-1/2 transition-transform duration-75"
-        style={{
-          transform: `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%) scale(${isHovered ? 0.6 : 1})`,
-          boxShadow: '0 0 10px rgba(0, 229, 192, 0.8)'
-        }}
+      <motion.div
+        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-primary pointer-events-none z-[9999]"
+        style={{ x: mouseX, y: mouseY, translateX: '-50%', translateY: '-50%' }}
+        animate={variant === 'view' ? { scale: 0.5, opacity: 0 } : { scale: 1, opacity: 1 }}
+        transition={{ duration: 0.15 }}
       />
-
-      {/* Trailing Ring */}
-      <div
-        className={`fixed top-0 left-0 rounded-full border pointer-events-none z-[99998] -translate-x-1/2 -translate-y-1/2 transition-all duration-150 ease-out ${
-          isHovered
-            ? 'w-14 h-14 border-[#7c5cfc] bg-[#7c5cfc]/10'
-            : 'w-8 h-8 border-[#00e5c0]/50 bg-transparent'
-        }`}
-        style={{
-          transform: `translate3d(${pos.x}px, ${pos.y}px, 0) translate(-50%, -50%)`
-        }}
-      />
+      <motion.div
+        className="fixed top-0 left-0 rounded-full border pointer-events-none z-[9998] flex items-center justify-center overflow-hidden"
+        style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
+        animate={ringStyles[variant ?? 'default']}
+        transition={{ type: 'tween', ease: 'easeOut', duration: 0.2 }}
+      >
+        {variant === 'view' && (
+          <span className="text-[10px] text-black tracking-widest font-bold uppercase select-none">View</span>
+        )}
+      </motion.div>
     </>
   );
 };

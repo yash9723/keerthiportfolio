@@ -3,7 +3,8 @@ export interface Project {
   title: string;
   tagline: string;
   category: string;
-  emoji: string;
+  /** Lucide icon key, mapped to a component in Projects.tsx */
+  icon: string;
   description: string;
   longDescription: string;
   role: string;
@@ -12,6 +13,7 @@ export interface Project {
   githubUrl: string;
   liveUrl: string;
   videoUrl?: string;
+  videoPoster?: string;
 }
 
 export interface SkillCategory {
@@ -64,7 +66,5 @@ export interface Profile {
   location: string;
   stats: {
     cgpa: string;
-    projectsCount: number;
-    certsCount: number;
   };
 }
