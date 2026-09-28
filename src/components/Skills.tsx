@@ -1,139 +1,114 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Code, Globe, Cpu, Award } from 'lucide-react';
-import { AnimatedSegments } from './AnimatedText';
+import { Award, Code, Cpu, Globe, LucideIcon, X } from 'lucide-react';
+import { skillsData } from '../data/skills';
+import { SkillCategory } from '../types';
+import { SectionHeader } from './SectionHeader';
+import { AmbientGlow } from './AmbientGlow';
 
-interface SkillCardProps {
-  icon: React.ReactNode;
-  title: string;
-  skills: string[];
-  index: number;
+const iconMap: Record<string, LucideIcon> = {
+  code: Code,
+  globe: Globe,
+  cpu: Cpu,
+  award: Award
+};
+
+interface SkillsProps {
   selectedSkill: string | null;
   onSelectSkill: (skill: string | null) => void;
 }
 
-const SkillCard: React.FC<SkillCardProps> = ({
-  icon,
-  title,
-  skills,
-  index,
-  selectedSkill,
-  onSelectSkill,
-}) => {
+interface SkillCardProps extends SkillsProps {
+  category: SkillCategory;
+  index: number;
+}
+
+const SkillCard: React.FC<SkillCardProps> = ({ category, index, selectedSkill, onSelectSkill }) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const Icon = iconMap[category.icon] ?? Code;
 
   return (
     <motion.div
       ref={ref}
-      className="bg-[#101010] border border-primary/[0.06] rounded-2xl p-5 sm:p-6 flex flex-col h-full"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-      transition={{ delay: index * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="glass-shell h-full"
+      initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+      animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 24, filter: 'blur(8px)' }}
+      transition={{ delay: index * 0.08, duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
     >
-      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-        {icon}
-      </div>
-      <h3 className="text-primary text-xs sm:text-sm font-medium tracking-widest uppercase mb-4">
-        {title}
-      </h3>
-      <div className="flex flex-wrap gap-2">
-        {skills.map((skill) => {
-          const isSelected = selectedSkill === skill;
-          return (
-            <button
-              key={skill}
-              onClick={() => onSelectSkill(isSelected ? null : skill)}
-              className={`px-3 py-1.5 rounded-md text-xs sm:text-sm transition-all duration-300 border font-medium ${
-                isSelected
-                  ? 'bg-primary text-black border-primary shadow-lg shadow-primary/10'
-                  : selectedSkill !== null && !isSelected
-                  ? 'bg-primary/[0.02] border-primary/5 text-primary/30 opacity-40 hover:opacity-100 hover:text-primary hover:border-primary/20'
-                  : 'bg-primary/[0.06] border-primary/15 text-primary/70 hover:bg-primary/[0.12] hover:text-primary hover:border-primary/30'
-              }`}
-              data-cursor="pointer"
-            >
-              {skill}
-            </button>
-          );
-        })}
+      <div className="glass-core p-5 sm:p-6 flex flex-col h-full">
+        <div className="w-11 h-11 rounded-2xl glass-chip flex items-center justify-center mb-6">
+          <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
+        </div>
+        <h3 className="text-primary text-xs sm:text-[13px] font-medium tracking-[0.18em] uppercase mb-4">
+          {category.title}
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {category.skills.map((skill) => {
+            const isSelected = selectedSkill === skill;
+            const isDimmed = selectedSkill !== null && !isSelected;
+            const stateClass = isSelected
+              ? 'bg-primary text-black shadow-[0_8px_24px_-8px_rgba(222,219,200,0.45)]'
+              : isDimmed
+                ? 'glass-chip text-primary/50 hover:text-primary'
+                : 'glass-chip text-primary/85 hover:text-primary hover:bg-primary/10';
+
+            return (
+              <button
+                key={skill}
+                onClick={() => onSelectSkill(isSelected ? null : skill)}
+                aria-pressed={isSelected}
+                className={`pressable min-h-[36px] px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium ${stateClass}`}
+                data-cursor="pointer"
+              >
+                {skill}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </motion.div>
   );
 };
 
-const skillCategories = [
-  {
-    icon: <Code className="w-5 h-5 text-primary" />,
-    title: 'Languages',
-    skills: ['Java', 'Python', 'SQL', 'JavaScript'],
-  },
-  {
-    icon: <Globe className="w-5 h-5 text-primary" />,
-    title: 'Web Technologies',
-    skills: ['React', 'Vite', 'HTML', 'CSS'],
-  },
-  {
-    icon: <Cpu className="w-5 h-5 text-primary" />,
-    title: 'Concepts',
-    skills: ['OOP', 'Core Java', 'MongoDB', 'Full-Stack'],
-  },
-  {
-    icon: <Award className="w-5 h-5 text-primary" />,
-    title: 'Coding Platforms',
-    skills: ['CodeChef', 'LeetCode', 'HackerRank'],
-  },
-];
-
-export const Skills: React.FC<{
-  selectedSkill: string | null;
-  onSelectSkill: (skill: string | null) => void;
-}> = ({ selectedSkill, onSelectSkill }) => {
+export const Skills: React.FC<SkillsProps> = ({ selectedSkill, onSelectSkill }) => {
   return (
-    <section id="skills" className="bg-black relative px-4 md:px-6 py-20 sm:py-28 md:py-36">
-      <div className="absolute inset-0 bg-noise opacity-[0.08] pointer-events-none" />
+    <section id="skills" className="relative px-4 md:px-6 py-24 sm:py-28 md:py-40">
+      <AmbientGlow tone="amber" intensity={0.12} className="-right-40 top-10 w-[46rem] h-[36rem]" />
+      <AmbientGlow tone="cream" intensity={0.06} className="-left-32 bottom-0 w-[40rem] h-[30rem]" />
       <div className="relative max-w-7xl mx-auto">
         <div className="mb-12 sm:mb-16 md:mb-20 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-          <div>
-            <p className="text-primary text-[10px] sm:text-xs tracking-widest uppercase mb-4">
-              01 / Skills
-            </p>
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal leading-tight">
-              <AnimatedSegments
-                segments={[{ text: 'Technologies and tools I work with.', className: 'text-primary' }]}
-                containerClassName="justify-start"
-              />
-            </h2>
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal leading-tight mt-1">
-              <AnimatedSegments
-                segments={[{ text: 'Always learning. Always building.', className: 'text-gray-500' }]}
-                containerClassName="justify-start"
-              />
-            </h2>
-          </div>
+          <SectionHeader
+            eyebrow="01 / Skills"
+            lines={[{ text: 'Technologies and tools I work with.' }, { text: 'Always learning. Always building.', muted: true }]}
+          >
+            <p className="text-primary/60 text-xs sm:text-sm mt-4">Select a skill to highlight the projects that use it.</p>
+          </SectionHeader>
 
           {selectedSkill && (
             <div className="flex items-center gap-3 self-start sm:self-auto">
-              <span className="text-[10px] sm:text-xs font-mono uppercase text-primary/40">
-                Filtering Projects:
-              </span>
+              <span className="text-[10px] sm:text-xs font-mono uppercase text-primary/60">Filtering projects:</span>
               <button
                 onClick={() => onSelectSkill(null)}
-                className="px-2.5 py-1 bg-primary/10 border border-primary/25 rounded-md text-primary text-xs flex items-center gap-1.5 hover:bg-primary/20 transition-all"
+                aria-label={`Clear ${selectedSkill} filter`}
+                className="pressable glass-chip min-h-[36px] pl-3.5 pr-2 py-1 rounded-full text-primary text-xs flex items-center gap-1.5 hover:bg-primary/10"
                 data-cursor="pointer"
               >
-                {selectedSkill} <span className="opacity-60">×</span>
+                {selectedSkill}
+                <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                  <X className="w-3 h-3" aria-hidden="true" />
+                </span>
               </button>
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-2 md:gap-1">
-          {skillCategories.map((cat, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {skillsData.map((category, index) => (
             <SkillCard
-              key={cat.title}
-              {...cat}
-              index={idx}
+              key={category.title}
+              category={category}
+              index={index}
               selectedSkill={selectedSkill}
               onSelectSkill={onSelectSkill}
             />

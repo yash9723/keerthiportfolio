@@ -1,321 +1,340 @@
-import React, { useState, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, CircleCheck } from 'lucide-react';
 import { projectsData } from '../data/projects';
 import { Project } from '../types';
 import { ProjectModal } from './ProjectModal';
-import { AnimatedSegments } from './AnimatedText';
+import { SectionHeader } from './SectionHeader';
+import { BackgroundVideo } from './BackgroundVideo';
+import { AmbientGlow } from './AmbientGlow';
+import { getProjectIcon } from './projectIcons';
+import { BrowserFrame } from './BrowserFrame';
 
 interface ProjectsProps {
   selectedSkill: string | null;
 }
 
-const ProjectCardWrapper: React.FC<{
-  children: React.ReactNode;
+const titleId = (project: Project) => `project-title-${project.id}`;
+
+interface BentoCardProps {
   index: number;
+  /** Styles for the inner glass plate (padding, layout, extra tint). */
   className?: string;
-  onClick?: () => void;
-}> = ({ children, index, className = '', onClick }) => {
+  /** Grid placement, e.g. row/column spans. */
+  wrapperClassName?: string;
+  /** Faded out because it doesn't match the selected skill. */
+  dimmed?: boolean;
+  /** When set, the card opens this project's details on click, Enter or Space. */
+  project?: Project;
+  onOpen?: (project: Project) => void;
+  children: React.ReactNode;
+}
+
+/**
+ * Double-bezel card. The outer tray (glass-shell) owns dimming, hover and press via CSS; the inner
+ * plate (glass-core) owns the scroll-in entrance. Keeping them apart matters: Framer writes inline
+ * opacity/transform, which would silently override Tailwind opacity/scale classes on the same element.
+ */
+const BentoCard: React.FC<BentoCardProps> = ({
+  index,
+  className = '',
+  wrapperClassName = '',
+  dimmed = false,
+  project,
+  onOpen,
+  children
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-60px' });
+  const isInteractive = Boolean(project && onOpen);
+
+  const open = () => {
+    if (project && onOpen) onOpen(project);
+  };
 
   return (
-    <motion.div
-      ref={ref}
-      onClick={onClick}
-      className={`rounded-2xl overflow-hidden cursor-pointer group ${className}`}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ delay: index * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      data-cursor={onClick ? 'view' : undefined}
+    <div
+      onClick={isInteractive ? open : undefined}
+      onKeyDown={
+        isInteractive
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                open();
+              }
+            }
+          : undefined
+      }
+      role={isInteractive ? 'button' : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      aria-haspopup={isInteractive ? 'dialog' : undefined}
+      // Named by its visible title so voice-control users can say what they see ("click Legal Lens AI")
+      aria-labelledby={project ? titleId(project) : undefined}
+      data-cursor={isInteractive ? 'view' : undefined}
+      className={`group glass-shell transition-[opacity,transform,filter,box-shadow] duration-300 ease-out-strong ${
+        isInteractive ? 'is-interactive cursor-pointer active:scale-[0.99]' : ''
+      } ${dimmed ? 'opacity-25 scale-[0.98] saturate-0 hover:opacity-60' : ''} ${wrapperClassName}`}
     >
-      {children}
-    </motion.div>
+      <motion.div
+        ref={ref}
+        className={`glass-core h-full overflow-hidden ${className}`}
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ delay: index * 0.08, duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 };
 
+/** Whether a project should stay highlighted for the skill picked in the Skills section. */
+const projectMatchesSkill = (project: Project, skill: string): boolean => {
+  const s = skill.toLowerCase();
+  const techs = project.technologies.map((t) => t.toLowerCase());
+
+  if (s === 'full-stack') return ['legal-lens', 'edufeedback-erp', 'hirehub'].includes(project.id);
+  if (s === 'python') return project.id === 'legal-lens';
+  if (s === 'javascript') return techs.some((t) => t === 'javascript' || t === 'react' || t === 'vite');
+  if (s === 'css') return techs.some((t) => t === 'css' || t === 'tailwind css');
+  if (s === 'html') return techs.some((t) => t === 'html' || t === 'react');
+  return techs.some((t) => t.includes(s));
+};
+
+const MatchBadge: React.FC = () => (
+  <span className="px-2.5 py-1 bg-primary text-black rounded-full text-[10px] tracking-wider uppercase font-bold whitespace-nowrap">
+    Matching skill
+  </span>
+);
+
+const Tag: React.FC<{ label: string }> = ({ label }) => (
+  <span className="glass-chip px-3 py-1 rounded-full text-xs text-primary/80">{label}</span>
+);
+
+const CategoryLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span className="text-primary/60 text-[10px] sm:text-xs tracking-[0.2em] uppercase">{children}</span>
+);
+
+/** Arrow inside its own glass circle that drifts toward its corner when the card is hovered. */
+const HoverArrow: React.FC = () => (
+  <span className="w-8 h-8 rounded-full glass-chip flex items-center justify-center flex-shrink-0 transition-transform duration-300 ease-out-strong group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:scale-105">
+    <ArrowUpRight className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+  </span>
+);
+
+/** Live-site screenshot that lifts slightly when its card is hovered. */
+const ProjectPreview: React.FC<{ project: Project; sizes?: string; className?: string }> = ({
+  project,
+  sizes,
+  className = ''
+}) =>
+  project.screenshot ? (
+    <div className={`transition-transform duration-500 ease-out-strong group-hover:-translate-y-1 ${className}`}>
+      <BrowserFrame src={project.screenshot} alt={`${project.title} — live site`} url={project.liveUrl} sizes={sizes} />
+    </div>
+  ) : null;
+
+const featuredHighlights = [
+  'Built with React (Vite) and MongoDB for full-stack document analysis',
+  'Automatic summarization and key clause extraction engine',
+  'Redesigned readability of complex legal text for non-experts'
+];
+
+// Short tag lists shown on the cards; the full stack lives in the details modal
+const cardTags: Record<string, string[]> = {
+  'legal-lens': ['React', 'Vite', 'MongoDB', 'AI / NLP'],
+  'edufeedback-erp': ['React', 'Recharts', 'Socket.IO', 'Drag-and-Drop'],
+  rapidaid: ['React', 'Vite', 'TypeScript'],
+  'music-player': ['HTML', 'CSS', 'JavaScript'],
+  hirehub: ['React', 'Express.js', 'MongoDB', 'JWT']
+};
+
+const findProject = (id: string): Project => projectsData.find((p) => p.id === id) ?? projectsData[0];
+
 export const Projects: React.FC<ProjectsProps> = ({ selectedSkill }) => {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
-
-  const getProject = (id: string) => projectsData.find((p) => p.id === id) || projectsData[0];
-
-  const matchesSkill = (projectId: string) => {
-    if (!selectedSkill) return true;
-    const p = projectsData.find((proj) => proj.id === projectId);
-    if (!p) return false;
-    const skill = selectedSkill.toLowerCase();
-    if (skill === 'full-stack') return projectId === 'legal-lens' || projectId === 'edufeedback-erp';
-    if (skill === 'python') return projectId === 'legal-lens';
-    if (skill === 'javascript') {
-      return p.technologies.some(
-        (t) =>
-          t.toLowerCase() === 'javascript' ||
-          t.toLowerCase() === 'react' ||
-          t.toLowerCase() === 'vite'
-      );
-    }
-    if (skill === 'css') {
-      return p.technologies.some((t) => t.toLowerCase() === 'css' || t.toLowerCase() === 'tailwind css');
-    }
-    if (skill === 'html') {
-      return p.technologies.some((t) => t.toLowerCase() === 'html' || t.toLowerCase() === 'react');
-    }
-    return p.technologies.some((t) => t.toLowerCase().includes(skill));
-  };
+  const closeModal = useCallback(() => setActiveProject(null), []);
 
   const isFiltering = selectedSkill !== null;
-  const legalLens = getProject('legal-lens');
-  const eduFeedback = getProject('edufeedback-erp');
-  const rapidAid = getProject('rapidaid');
-  const musicPlayer = getProject('music-player');
+  const matches = (project: Project) => !selectedSkill || projectMatchesSkill(project, selectedSkill);
+  const isDimmed = (project: Project) => isFiltering && !matches(project);
+  const showBadge = (project: Project) => isFiltering && matches(project);
+
+  const legalLens = findProject('legal-lens');
+  const musicPlayer = findProject('music-player');
+  const FeaturedIcon = getProjectIcon(legalLens.icon);
+
+  const renderCompactCard = (project: Project, index: number) => {
+    const Icon = getProjectIcon(project.icon);
+    return (
+      <BentoCard
+        key={project.id}
+        index={index}
+        project={project}
+        onOpen={setActiveProject}
+        dimmed={isDimmed(project)}
+        className="p-6 sm:p-7 flex flex-col"
+      >
+        <div className="flex items-start justify-between gap-3 mb-5">
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-2xl glass-chip flex items-center justify-center">
+              <Icon className="w-[18px] h-[18px] text-primary" aria-hidden="true" />
+            </span>
+            <CategoryLabel>{project.category}</CategoryLabel>
+          </div>
+          <div className="flex items-center gap-2">
+            {showBadge(project) && <MatchBadge />}
+            <HoverArrow />
+          </div>
+        </div>
+        <h3 id={titleId(project)} className="text-primary text-lg sm:text-xl font-bold mb-2">
+          {project.title}
+        </h3>
+        <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6 text-pretty">{project.description}</p>
+        <div className="flex flex-wrap gap-2">
+          {cardTags[project.id].map((t) => (
+            <Tag key={t} label={t} />
+          ))}
+        </div>
+        {project.screenshot && <ProjectPreview project={project} className="mt-6" />}
+      </BentoCard>
+    );
+  };
 
   return (
-    <section id="projects" className="bg-black relative px-4 md:px-6 py-20 sm:py-28 md:py-36">
-      <div className="absolute inset-0 bg-noise opacity-[0.15] pointer-events-none" />
+    <section id="projects" className="relative px-4 md:px-6 py-24 sm:py-28 md:py-40">
+      <AmbientGlow tone="amber" intensity={0.16} className="-left-48 top-40 w-[56rem] h-[48rem]" />
+      <AmbientGlow tone="rose" intensity={0.1} className="-right-40 bottom-20 w-[46rem] h-[40rem]" />
       <div className="relative max-w-7xl mx-auto">
-        <div className="mb-12 sm:mb-16 md:mb-20">
-          <p className="text-primary text-[10px] sm:text-xs tracking-widest uppercase mb-4">
-            02 / Projects
-          </p>
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal leading-tight">
-            <AnimatedSegments
-              segments={[{ text: 'Work that solves real problems.', className: 'text-primary' }]}
-              containerClassName="justify-start"
-            />
-          </h2>
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal leading-tight mt-1">
-            <AnimatedSegments
-              segments={[{ text: 'Built with passion. Shipped with purpose.', className: 'text-gray-500' }]}
-              containerClassName="justify-start"
-            />
-          </h2>
-        </div>
+        <SectionHeader
+          eyebrow="02 / Projects"
+          lines={[{ text: 'Work that solves real problems.' }, { text: 'Built with passion. Shipped with purpose.', muted: true }]}
+          className="mb-12 sm:mb-16 md:mb-20"
+        />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-2 md:gap-1">
-          {/* Card 0: Legal Lens AI (Featured, Row Span 2) */}
-          <ProjectCardWrapper
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/*
+            P-01: featured, full width. Text on the left, the live-site preview on the right at its
+            natural 16:10 — a landscape screenshot fits a wide card without cropping.
+          */}
+          <BentoCard
             index={0}
-            className={`bg-[#212121] lg:row-span-2 transition-all duration-500 ${
-              isFiltering && !matchesSkill('legal-lens')
-                ? 'opacity-10 scale-[0.98] blur-[1px] pointer-events-none'
-                : ''
-            }`}
-            onClick={() => setActiveProject(legalLens)}
+            project={legalLens}
+            onOpen={setActiveProject}
+            dimmed={isDimmed(legalLens)}
+            wrapperClassName="lg:col-span-2"
           >
-            <div className="p-6 sm:p-8 flex flex-col h-full relative">
-              {isFiltering && matchesSkill('legal-lens') && (
-                <span className="absolute top-8 right-8 px-2.5 py-0.5 bg-primary/20 border border-primary/45 rounded-full text-primary text-[9px] tracking-wider uppercase font-semibold">
-                  Matching skill
-                </span>
-              )}
-              <div className="flex items-center justify-between mb-6">
-                <span className="text-primary/40 text-[10px] sm:text-xs tracking-widest uppercase">
-                  P-01 / Featured
-                </span>
-                <span className="px-3 py-1 bg-primary/[0.08] border border-primary/15 rounded-full text-primary text-[10px] sm:text-xs tracking-wider uppercase">
-                  AI-Powered
-                </span>
+            <div
+              aria-hidden="true"
+              className="absolute inset-y-0 left-0 w-2/3 pointer-events-none"
+              style={{ background: 'radial-gradient(70% 70% at 10% 0%, rgba(214,140,72,0.16), transparent 70%)' }}
+            />
+            <div className="relative p-6 sm:p-9 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-8 lg:gap-12 items-center">
+              <div>
+              <div className="flex items-start justify-between gap-3 mb-8">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="w-10 h-10 rounded-2xl glass-chip flex items-center justify-center">
+                    <FeaturedIcon className="w-[18px] h-[18px] text-primary" aria-hidden="true" />
+                  </span>
+                  <CategoryLabel>{legalLens.category}</CategoryLabel>
+                  <span className="glass-chip px-2.5 py-1 rounded-full text-primary text-[10px] tracking-[0.18em] uppercase">
+                    AI-Powered
+                  </span>
+                  {showBadge(legalLens) && <MatchBadge />}
+                </div>
+                <HoverArrow />
               </div>
-              <div className="text-4xl mb-4">⚖️</div>
-              <h3 className="text-primary text-xl sm:text-2xl font-bold mb-3">{legalLens.title}</h3>
-              <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-6">
+              <h3 id={titleId(legalLens)} className="text-primary text-2xl sm:text-3xl font-bold mb-3 tracking-tight">
+                {legalLens.title}
+              </h3>
+              <p className="text-gray-400 text-sm sm:text-base leading-relaxed mb-7 max-w-lg text-pretty">
                 {legalLens.description}
               </p>
-              <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-400 text-xs sm:text-sm">
-                    Built with React (Vite) and MongoDB for full-stack document analysis
-                  </span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-400 text-xs sm:text-sm">
-                    Automatic summarization and key clause extraction engine
-                  </span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-400 text-xs sm:text-sm">
-                    Redesigned readability of complex legal text for non-experts
-                  </span>
-                </li>
+              <ul className="space-y-3 mb-8">
+                {featuredHighlights.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CircleCheck className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                    <span className="text-gray-300 text-xs sm:text-sm">{item}</span>
+                  </li>
+                ))}
               </ul>
-              <div className="flex flex-wrap gap-2 mb-6">
-                {['React', 'Vite', 'MongoDB', 'AI / NLP'].map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1 bg-primary/[0.06] border border-primary/15 rounded-md text-primary/60 text-xs"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-              <span className="inline-flex items-center gap-1.5 text-primary text-xs sm:text-sm hover:opacity-80 transition-opacity w-fit mt-auto">
-                View project details <ArrowUpRight className="w-3.5 h-3.5" />
-              </span>
-            </div>
-          </ProjectCardWrapper>
-
-          {/* Card 1: EduFeedback ERP */}
-          <ProjectCardWrapper
-            index={1}
-            className={`bg-[#181818] p-6 sm:p-8 flex flex-col justify-between transition-all duration-500 ${
-              isFiltering && !matchesSkill('edufeedback-erp')
-                ? 'opacity-10 scale-[0.98] blur-[1px] pointer-events-none'
-                : ''
-            }`}
-            onClick={() => setActiveProject(eduFeedback)}
-          >
-            <div className="relative">
-              {isFiltering && matchesSkill('edufeedback-erp') && (
-                <span className="absolute top-0 right-0 px-2.5 py-0.5 bg-primary/20 border border-primary/45 rounded-full text-primary text-[9px] tracking-wider uppercase font-semibold">
-                  Matching skill
-                </span>
-              )}
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-primary/40 text-[10px] sm:text-xs tracking-widest uppercase">
-                  P-02 / Management
-                </span>
-                <span className="text-primary text-xs tracking-wide group-hover:underline flex items-center gap-1">
-                  View <ArrowUpRight className="w-3 h-3" />
-                </span>
-              </div>
-              <h3 className="text-primary text-lg sm:text-xl font-bold mb-2">{eduFeedback.title}</h3>
-              <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6">
-                {eduFeedback.description}
-              </p>
               <div className="flex flex-wrap gap-2">
-                {['React', 'Recharts', 'Socket.IO', 'Drag-and-Drop'].map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1 bg-black border border-primary/15 rounded-md text-primary/60 text-xs"
-                  >
-                    {tech}
-                  </span>
+                {cardTags[legalLens.id].map((t) => (
+                  <Tag key={t} label={t} />
                 ))}
               </div>
-            </div>
-          </ProjectCardWrapper>
-
-          {/* Card 2: RapidAid */}
-          <ProjectCardWrapper
-            index={2}
-            className={`bg-[#212121] p-6 sm:p-8 flex flex-col justify-between transition-all duration-500 ${
-              isFiltering && !matchesSkill('rapidaid')
-                ? 'opacity-10 scale-[0.98] blur-[1px] pointer-events-none'
-                : ''
-            }`}
-            onClick={() => setActiveProject(rapidAid)}
-          >
-            <div className="relative">
-              {isFiltering && matchesSkill('rapidaid') && (
-                <span className="absolute top-0 right-0 px-2.5 py-0.5 bg-primary/20 border border-primary/45 rounded-full text-primary text-[9px] tracking-wider uppercase font-semibold">
-                  Matching skill
-                </span>
-              )}
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-primary/40 text-[10px] sm:text-xs tracking-widest uppercase">
-                  P-03 / Social Good
-                </span>
-                <span className="text-primary text-xs tracking-wide group-hover:underline flex items-center gap-1">
-                  View <ArrowUpRight className="w-3 h-3" />
-                </span>
               </div>
-              <h3 className="text-primary text-lg sm:text-xl font-bold mb-2">{rapidAid.title}</h3>
-              <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6">
-                {rapidAid.description}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {['React', 'Vite', 'TypeScript'].map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1 bg-black border border-primary/15 rounded-md text-primary/60 text-xs"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
+              <ProjectPreview project={legalLens} sizes="(min-width: 1024px) 660px, 100vw" />
             </div>
-          </ProjectCardWrapper>
+          </BentoCard>
 
-          {/* Card 3: Music Player App with Authentic Video Background */}
-          <ProjectCardWrapper
+          {renderCompactCard(findProject('edufeedback-erp'), 1)}
+          {renderCompactCard(findProject('rapidaid'), 2)}
+
+          {/* P-04: video-backed card */}
+          <BentoCard
             index={3}
-            className={`relative min-h-[280px] lg:min-h-0 transition-all duration-500 ${
-              isFiltering && !matchesSkill('music-player')
-                ? 'opacity-10 scale-[0.98] blur-[1px] pointer-events-none'
-                : ''
-            }`}
-            onClick={() => setActiveProject(musicPlayer)}
+            project={musicPlayer}
+            onOpen={setActiveProject}
+            dimmed={isDimmed(musicPlayer)}
+            className="min-h-[300px] lg:min-h-[280px]"
           >
-            {musicPlayer.videoUrl && (
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-              >
-                <source src={musicPlayer.videoUrl} type="video/mp4" />
-              </video>
+            {musicPlayer.videoUrl && musicPlayer.videoPoster && (
+              <BackgroundVideo
+                sources={[{ src: musicPlayer.videoUrl }]}
+                poster={musicPlayer.videoPoster}
+                lazy
+                className="transition-transform duration-700 ease-out-strong group-hover:scale-[1.03]"
+              />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-              {isFiltering && matchesSkill('music-player') && (
-                <span className="absolute top-6 right-6 px-2.5 py-0.5 bg-primary/20 border border-primary/45 rounded-full text-primary text-[9px] tracking-wider uppercase font-semibold">
-                  Matching skill
-                </span>
-              )}
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-primary/40 text-[10px] sm:text-xs tracking-widest uppercase">
-                  P-04 / Media
-                </span>
-                <span className="text-primary text-xs tracking-wide flex items-center gap-1">
-                  View Details <ArrowUpRight className="w-3 h-3" />
-                </span>
-              </div>
-              <h3 className="text-primary text-lg sm:text-xl font-bold mb-2">{musicPlayer.title}</h3>
-              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-4 max-w-md">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/10" />
+            <div className="absolute top-5 right-5 flex items-center gap-2">
+              {showBadge(musicPlayer) && <MatchBadge />}
+              <HoverArrow />
+            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
+              <CategoryLabel>{musicPlayer.category}</CategoryLabel>
+              <h3 id={titleId(musicPlayer)} className="text-primary text-lg sm:text-xl font-bold mt-2 mb-2">
+                {musicPlayer.title}
+              </h3>
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed mb-4 max-w-md text-pretty">
                 {musicPlayer.description}
               </p>
               <div className="flex flex-wrap gap-2">
-                {['HTML', 'CSS', 'JavaScript'].map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1 bg-black/60 border border-primary/15 rounded-md text-primary/70 text-xs backdrop-blur-sm"
-                  >
-                    {tech}
-                  </span>
+                {cardTags[musicPlayer.id].map((t) => (
+                  <Tag key={t} label={t} />
                 ))}
               </div>
             </div>
-          </ProjectCardWrapper>
+          </BentoCard>
 
-          {/* Card 4: Project Philosophy */}
-          <ProjectCardWrapper
-            index={4}
-            className={`bg-[#181818] p-6 sm:p-8 transition-all duration-500 ${isFiltering ? 'opacity-30' : ''}`}
+          {renderCompactCard(findProject('hirehub'), 4)}
+
+          {/* Philosophy card spans the full row */}
+          <BentoCard
+            index={5}
+            wrapperClassName={`lg:col-span-2 ${isFiltering ? 'opacity-40' : ''}`}
+            className="p-6 sm:p-9"
           >
-            <div className="flex items-center justify-between h-full">
+            <div className="flex items-center justify-between gap-6 h-full">
               <div>
-                <p className="text-primary/40 text-[10px] sm:text-xs tracking-widest uppercase mb-3">
-                  Project Philosophy
-                </p>
-                <p className="text-primary text-base sm:text-lg font-light leading-relaxed max-w-sm">
-                  Every project starts with a problem worth solving. I focus on clean architecture, intuitive interfaces, and code that scales.
+                <p className="text-primary/60 text-[10px] sm:text-xs tracking-[0.2em] uppercase mb-3">Project Philosophy</p>
+                <p className="text-primary text-lg sm:text-2xl font-light leading-snug max-w-2xl text-pretty">
+                  Every project starts with a problem worth solving. I focus on{' '}
+                  <span className="font-serif italic">clean architecture</span>, intuitive interfaces, and code that
+                  scales.
                 </p>
               </div>
-              <div className="hidden sm:flex flex-col items-center gap-1 ml-6">
-                <span className="text-primary text-3xl font-bold">4</span>
-                <span className="text-primary/40 text-[9px] tracking-widest uppercase">Shipped</span>
+              <div className="hidden sm:flex flex-col items-center gap-1 ml-6 glass-chip rounded-2xl px-6 py-4">
+                <span className="text-primary text-4xl font-bold tabular-nums leading-none">{projectsData.length}</span>
+                <span className="text-primary/60 text-[10px] tracking-[0.2em] uppercase">Shipped</span>
               </div>
             </div>
-          </ProjectCardWrapper>
+          </BentoCard>
         </div>
       </div>
 
-      {activeProject && <ProjectModal project={activeProject} onClose={() => setActiveProject(null)} />}
+      <ProjectModal project={activeProject} onClose={closeModal} />
     </section>
   );
 };

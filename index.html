@@ -2,16 +2,84 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Petla Keerthi — Software Developer. Information Technology student with hands-on experience in full-stack web development." />
-    <title>Petla Keerthi — Software Developer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Petla Keerthi — Full-Stack Developer Portfolio</title>
+    <meta
+      name="description"
+      content="Petla Keerthi is a full-stack web developer and B.Tech Information Technology student (9.23 CGPA) building React, Node.js and MongoDB apps — including Legal Lens AI, HireHub and RapidAid."
+    />
+    <meta name="author" content="Petla Keerthi" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="https://keerthipetla.dev/" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+
+    <!-- Social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Petla Keerthi" />
+    <meta property="og:url" content="https://keerthipetla.dev/" />
+    <meta property="og:title" content="Petla Keerthi — Full-Stack Developer" />
+    <meta
+      property="og:description"
+      content="Full-stack web developer and IT student building React, Node.js and MongoDB apps. See projects, experience and how to get in touch."
+    />
+    <meta property="og:image" content="https://keerthipetla.dev/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Petla Keerthi — Full-Stack Developer portfolio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Petla Keerthi — Full-Stack Developer" />
+    <meta
+      name="twitter:description"
+      content="Full-stack web developer and IT student building React, Node.js and MongoDB apps."
+    />
+    <meta name="twitter:image" content="https://keerthipetla.dev/og-image.jpg" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Petla Keerthi",
+        "url": "https://keerthipetla.dev/",
+        "jobTitle": "Full-Stack Web Developer",
+        "email": "mailto:petlakeerthi@gmail.com",
+        "address": { "@type": "PostalAddress", "addressRegion": "Andhra Pradesh", "addressCountry": "IN" },
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Aditya University" },
+        "knowsAbout": ["React", "JavaScript", "Java", "Python", "SQL", "Node.js", "Express.js", "MongoDB", "Full-Stack Web Development"],
+        "sameAs": ["https://www.linkedin.com/in/keerthi-petla-9b2941298", "https://github.com/keerthipetla"]
+      }
+    </script>
   </head>
   <body class="bg-black text-[#dedbc8]">
-    <div id="root"></div>
+    <div id="root">
+      <!--
+        App shell: a static copy of the hero frame (same classes as Hero.tsx) so the poster — the LCP
+        element — paints as soon as it downloads instead of waiting for the JS bundle. React replaces
+        this with the live hero on mount; the image is already cached, so there's no visual jump.
+      -->
+      <section class="h-[100dvh] min-h-[560px] p-3 md:p-5" aria-hidden="true">
+        <div class="relative w-full h-full rounded-[1.75rem] md:rounded-[2.25rem] overflow-hidden bg-[#1a150f] ring-1 ring-inset ring-primary/10">
+          <img
+            src="./media/hero-poster-1440.webp"
+            srcset="./media/hero-poster-960.webp 960w, ./media/hero-poster-1440.webp 1440w, ./media/hero-poster-1920.webp 1920w"
+            sizes="100vw"
+            alt=""
+            fetchpriority="high"
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/75"></div>
+        </div>
+      </section>
+    </div>
+    <noscript>
+      <p style="font-family: sans-serif; color: #dedbc8; padding: 2rem">
+        Petla Keerthi — Full-Stack Web Developer. Email
+        <a href="mailto:petlakeerthi@gmail.com" style="color: #dedbc8">petlakeerthi@gmail.com</a> ·
+        <a href="https://github.com/keerthipetla" style="color: #dedbc8">GitHub</a> ·
+        <a href="https://www.linkedin.com/in/keerthi-petla-9b2941298" style="color: #dedbc8">LinkedIn</a>
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
